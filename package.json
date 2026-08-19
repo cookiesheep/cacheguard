@@ -1,0 +1,44 @@
+{
+  "name": "cacheguard",
+  "version": "0.1.0",
+  "description": "Read-only prompt-cache observability for coding agents. See the cache, before it expires.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "bin": {
+    "cacheguard": "dist/cli/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli/index.ts",
+    "start": "node dist/cli/index.js",
+    "test": "node --import tsx --test \"tests/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "schema-audit": "node scripts/schema-audit.mjs"
+  },
+  "keywords": [
+    "claude-code",
+    "prompt-cache",
+    "telemetry",
+    "llm",
+    "observability"
+  ],
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
