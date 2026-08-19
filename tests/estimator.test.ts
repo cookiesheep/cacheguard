@@ -192,3 +192,10 @@ test('every non-UNKNOWN estimate carries a reason naming its inputs', () => {
     assert.ok(est.ttl !== undefined);
   }
 });
+
+test('policy: null baseUrl (endpoint hidden by --claude-dir) never claims STATIC_POLICY', () => {
+  const p = resolveTtlPolicy({ observations: [], baseUrl: null });
+  assert.equal(p.source, 'UNKNOWN');
+  assert.ok(p.reason.includes('unverified'));
+  assert.ok(p.reliability <= 0.3);
+});

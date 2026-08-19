@@ -1,0 +1,304 @@
+{
+  "startedAt": 1787147616781,
+  "phase": "done",
+  "sessionId": "eff2fc29-23ef-4567-8d47-17e0887c51c1",
+  "steps": {
+    "sanity-1": {
+      "stepId": "sanity-1",
+      "label": "sanity round 1",
+      "wallStart": 1787147616791,
+      "wallEnd": 1787147624493,
+      "resultText": "Anything you'd like me to work on? Recent context is the CacheGuard lab experiments (Phase 1.5 scaffolding was the last commit) — happy to continue there or start something new.",
+      "telemetry": {
+        "telemetryTs": 1787147622939,
+        "ctx": 22949,
+        "cr": 768,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "UNKNOWN",
+      "budgetUsed": 23004
+    },
+    "sanity-2": {
+      "stepId": "sanity-2",
+      "label": "sanity round 2",
+      "wallStart": 1787147639505,
+      "wallEnd": 1787147646956,
+      "resultText": "Just let me know what you'd like to do next — I'm ready when you are.",
+      "telemetry": {
+        "telemetryTs": 1787147645958,
+        "ctx": 23027,
+        "cr": 21376,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 46068
+    },
+    "sanity-3": {
+      "stepId": "sanity-3",
+      "label": "sanity round 3",
+      "wallStart": 1787147661959,
+      "wallEnd": 1787147670030,
+      "resultText": "Understood — standing by.",
+      "telemetry": {
+        "telemetryTs": 1787147669275,
+        "ctx": 23065,
+        "cr": 22976,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 69141
+    },
+    "sanity-4": {
+      "stepId": "sanity-4",
+      "label": "sanity round 4",
+      "wallStart": 1787147685035,
+      "wallEnd": 1787147692090,
+      "resultText": "Standing by — send a task whenever you're ready.",
+      "telemetry": {
+        "telemetryTs": 1787147691100,
+        "ctx": 23090,
+        "cr": 23040,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 92254
+    },
+    "build-done": true,
+    "wait:ladder-3m": {
+      "stepId": "wait:ladder-3m",
+      "wakeAt": 1787148036622
+    },
+    "ladder-3m": {
+      "stepId": "ladder-3m",
+      "label": "after 3min idle",
+      "wallStart": 1787148036625,
+      "wallEnd": 1787148044874,
+      "resultText": "Read bigfile1.txt in full (500 lines) and replied \"done\" as requested. Anything else?",
+      "telemetry": {
+        "telemetryTs": 1787148044132,
+        "ctx": 85406,
+        "cr": 21376,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "PARTIAL",
+      "budgetUsed": 501664
+    },
+    "wait:ladder-6m": {
+      "stepId": "wait:ladder-6m",
+      "wakeAt": 1787148404874
+    },
+    "ladder-6m": {
+      "stepId": "ladder-6m",
+      "label": "after 6min idle",
+      "wallStart": 1787148404881,
+      "wallEnd": 1787148411761,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787148411028,
+        "ctx": 85447,
+        "cr": 85376,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 587116
+    },
+    "wait:ladder-10m": {
+      "stepId": "wait:ladder-10m",
+      "wakeAt": 1787149011762
+    },
+    "ladder-10m": {
+      "stepId": "ladder-10m",
+      "label": "after 10min idle",
+      "wallStart": 1787149011767,
+      "wallEnd": 1787149019494,
+      "resultText": "Standing by — ready when you are.",
+      "telemetry": {
+        "telemetryTs": 1787149018678,
+        "ctx": 85469,
+        "cr": 85440,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 672595
+    },
+    "wait:ladder-20m": {
+      "stepId": "wait:ladder-20m",
+      "wakeAt": 1787150219495
+    },
+    "ladder-20m": {
+      "stepId": "ladder-20m",
+      "label": "after 20min idle",
+      "wallStart": 1787150219507,
+      "wallEnd": 1787150226742,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787150225999,
+        "ctx": 85496,
+        "cr": 85440,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 758096
+    },
+    "wait:ladder-40m": {
+      "stepId": "wait:ladder-40m",
+      "wakeAt": 1787152626742
+    },
+    "ladder-40m": {
+      "stepId": "ladder-40m",
+      "label": "after 40min idle",
+      "wallStart": 1787152626744,
+      "wallEnd": 1787152635246,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787152634415,
+        "ctx": 85518,
+        "cr": 64,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "MISS",
+      "budgetUsed": 843619
+    },
+    "refresh-1-t0": {
+      "stepId": "refresh-1-t0",
+      "label": "refresh cycle 1 anchor",
+      "wallStart": 1787152635248,
+      "wallEnd": 1787152642463,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787152641687,
+        "ctx": 85540,
+        "cr": 85504,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 929164
+    },
+    "wait:refresh-1-m1": {
+      "stepId": "wait:refresh-1-m1",
+      "wakeAt": 1787153842464
+    },
+    "refresh-1-p1": {
+      "stepId": "refresh-1-p1",
+      "label": "cycle 1 probe at +20min",
+      "wallStart": 1787153842468,
+      "wallEnd": 1787153850141,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787153849366,
+        "ctx": 85562,
+        "cr": 85504,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 1014731
+    },
+    "wait:refresh-1-m2": {
+      "stepId": "wait:refresh-1-m2",
+      "wakeAt": 1787155050142
+    },
+    "refresh-1-p2": {
+      "stepId": "refresh-1-p2",
+      "label": "cycle 1 probe at +40min total",
+      "wallStart": 1787155050146,
+      "wallEnd": 1787155057887,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787155057117,
+        "ctx": 85668,
+        "cr": 85504,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 1100404
+    },
+    "refresh-2-t0": {
+      "stepId": "refresh-2-t0",
+      "label": "refresh cycle 2 anchor",
+      "wallStart": 1787155057888,
+      "wallEnd": 1787155065517,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787155064663,
+        "ctx": 85690,
+        "cr": 85632,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 1186099
+    },
+    "wait:refresh-2-m1": {
+      "stepId": "wait:refresh-2-m1",
+      "wakeAt": 1787156265518
+    },
+    "refresh-2-p1": {
+      "stepId": "refresh-2-p1",
+      "label": "cycle 2 probe at +20min",
+      "wallStart": 1787156265529,
+      "wallEnd": 1787156272746,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787156271937,
+        "ctx": 85712,
+        "cr": 21504,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "PARTIAL",
+      "budgetUsed": 1271820
+    },
+    "wait:refresh-2-m2": {
+      "stepId": "wait:refresh-2-m2",
+      "wakeAt": 1787157472747
+    },
+    "refresh-2-p2": {
+      "stepId": "refresh-2-p2",
+      "label": "cycle 2 probe at +40min total",
+      "wallStart": 1787157472760,
+      "wallEnd": 1787157479890,
+      "resultText": "Standing by.",
+      "telemetry": {
+        "telemetryTs": 1787157479111,
+        "ctx": 85734,
+        "cr": 85696,
+        "cc": 0,
+        "internalTurns": 1
+      },
+      "classification": "HIT",
+      "budgetUsed": 1357559
+    }
+  },
+  "budgetUsed": 1357559,
+  "lastCtx": 85734,
+  "obsCount": 23,
+  "channel": "headless",
+  "notes": [
+    "fatal: Error: build-1: is_error result=undefined",
+    "build-1 was executed manually at 2026-08-19T13:55:59Z after a transient gateway is_error inside the script; its ~230k tokens are included via resyncFromPipeline"
+  ],
+  "sanity": {
+    "ratios": [
+      0.033465510479759465,
+      0.9283015590393885,
+      0.9961413396921743,
+      0.9978345604157643
+    ],
+    "okHeadless": true
+  },
+  "refreshG": 40,
+  "refreshGKind": "MISS",
+  "finishedAt": 1787157479891
+}

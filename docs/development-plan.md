@@ -12,9 +12,9 @@
 |---|---|---|
 | Phase 0 — Investigation & Architecture | ✅ 完成 | 本机 schema 审计 + 官方机制调研 + 同类项目调研 + 技术栈决策 |
 | Phase 1 — Read-only Cache Monitor (MVP) | ✅ 实现并通过真实数据验证 | 见 §2 验收清单 |
-| Phase 1.5 — Controlled idle-time experiment | ⬜ 未开始 | 见 §5, 需要真实 Claude Code session 配合 |
-| Phase 2 — Cost Engine | ⬜ 未开始 | 费率已调研 (§4) |
-| Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现 |
+| Phase 1.5 — Controlled idle-time experiment | ✅ **完成 (2026-08-19)** | 核心结论: GLM 网关 TTL ∈ (20.1, 40.2]min; **read 刷新 TTL 成立** (2/2); 详见 [experiments/cache-ttl-validation.md](../experiments/cache-ttl-validation.md) 与 §5.5 |
+| Phase 2 — Cost Engine | ⬜ 未开始 (gate 已通过) | 费率已调研 (§4); GLM cached token 全额计配额 → 省配额模型核心 |
+| Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
 代码结构:
 
@@ -28,9 +28,10 @@ src/
 ├── storage/db.ts           # SQLite (sessions/observations/cache_events)
 ├── cli/                    # status / watch / sessions / events / backfill
 └── types/                  # 统一数据模型
-tests/  36 个用例 (parser 健壮性 / estimator 状态机 / policy / tailer / storage)
-docs/   claude-code-schema.md · architecture.md · development-plan.md
-scripts/schema-audit.mjs    # 重新审计真实 schema 的工具
+tests/  37 个用例 (parser 健壮性 / estimator 状态机 / policy / tailer / storage)
+docs/   claude-code-schema.md · architecture.md · development-plan.md · research-audit-2026-08-19.md
+experiments/  run-idle-experiment.mjs · soak-watch.mjs · cache-ttl-validation.md · results/logs
+scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 ```
 
 ## 1. Phase 0 结论 (2026-08-19)
@@ -95,7 +96,7 @@ scripts/schema-audit.mjs    # 重新审计真实 schema 的工具
 | C | 实时读取新 telemetry | ✅ | watch 模式: tailer 增量 tail (fs.watch+poll), 半行缓冲, 截断重置; 测试覆盖 |
 | D | 稳定恢复 cache read/write/timestamp/model/session | ✅ | parser 测试 + 真实 session 验证 (cr=128,576/cc/model 与手工审计一致) |
 | E | 显示六种状态 | ✅ | VERIFIED_HIT/LIKELY_HOT/AT_RISK/LIKELY_EXPIRED/VERIFIED_MISS/UNKNOWN 全部实现且有测试 |
-| F | 真实 idle-time experiment | ⬜ **未做** | 见 §5 — 需要主动实验, 是 Phase 1.5 |
+| F | 真实 idle-time experiment | ✅ | Phase 1.5 完成 (2026-08-19): headless 自执行, 25 步, 2h44m, 见 §5.5 |
 | G | 所有状态可解释来源 | ✅ | 每个 estimate 带 reason (点名输入) + confidence + TTL 来源 |
 | H | 只读, 不发请求 | ✅ | 代码零出站网络; 不写 ~/.claude 任何文件; 只写自有 ~/.cacheguard |
 
@@ -120,15 +121,15 @@ scripts/schema-audit.mjs    # 重新审计真实 schema 的工具
 ### P5 — costUSD 字段
 调研发现新版本记录可能带 `costUSD`。当前未使用 (Phase 1 不算钱)。Phase 2 决策: 与 ccusage 相同的三模式 (trust/recalculate/auto)。
 
-## 4. 未验证假设 (Phase 2+ 需要回答)
+## 4. 未验证假设 (Phase 1.5 后更新)
 
-1. **"读取刷新 TTL" 在 GLM 网关是否成立?** (Anthropic 官方成立; 网关未验证 → idle experiment 的核心问题)
-2. 网关 TTL 分布: 是固定 TTL 还是 LRU 逐出为主? (影响 keepalive 策略的期望收益计算)
-3. `ephemeral_5m/1h` 在网关下恒 0 — 网关是否根本不做档位区分?
-4. watch 模式在 Claude Code 长时间高频写入下的表现 (tailer 已设计为 O(增量), 待 soak test)
-5. ccusage #888 类问题: 同 message.id 后续记录的 output_tokens 增长 — 本机未见差异, keep-first 对 cache 字段无影响 (已验证), 但 Phase 2 算钱时需重新评估
+1. ~~"读取刷新 TTL" 在 GLM 网关是否成立?~~ **✅ VERIFIED (2026-08-19)**: 40min+中点整读 → 100% 命中 vs 对照 MISS, 2/2 周期。周期 2 显示部分读触发的重写同样延续存活 → 对 keepalive 而言 "任何 touch 都延续"。
+2. 网关 TTL 分布: 单点 MISS (40.2min) + 2/12 空闲探测出现 ~21.4k 部分层 → TTL/逐出是**分布而非常数**; 需 Phase 3 决策引擎按概率建模。未解: 21.4k 层的机制 (分层 checkpoint 假说)。
+3. `ephemeral_5m/1h` 在网关下恒 0 — 网关不做档位区分 (实验中 23/23 观测均为 0)。基本可关闭此假设: RUNTIME_TELEMETRY 档位对 GLM 无意义。
+4. watch soak 首份数据 ✅ (180min, 0 重启, 0 stderr, RSS ~68MB, CPU <0.05%); 高频写入日间 soak 仍待做 (audit §2.3.2: 挂真实工作日)。
+5. ccusage #888 类问题: 同 message.id 后续记录 output_tokens 增长 — 本机未见差异; Phase 2 算钱时重新评估。
 
-## 5. Phase 1.5 — Controlled Idle-Time Experiment (下一步, 进入 Phase 2 的门)
+## 5. Phase 1.5 — Controlled Idle-Time Experiment (✅ 2026-08-19 完成)
 
 方案 (使用一个真实 Claude Code session, 通过本工具观测):
 
@@ -136,6 +137,15 @@ scripts/schema-audit.mjs    # 重新审计真实 schema 的工具
 2. 空闲阶梯: 1min / 3min / 5min / 8min / 12min / 20min / 40min 后各发一轮简单请求;
 3. 每轮记录 (自动入库, 事后导出): idle gap / cache_read / cache_creation / input / output / 估计状态 vs 实测结果;
 4. 产出 `experiments/cache-ttl-validation.md`, 回答: telemetry 是否稳定出现 / miss 是否在预期窗口 / EMPIRICAL_ESTIMATE 与实测的偏差 / 无法解释的观测。
+
+### 5.5 执行结果 (详报: experiments/cache-ttl-validation.md)
+
+- **执行**: headless `claude -p --resume` (干净 CLAUDE_CONFIG_DIR 通道, 网关 env 继承用户 settings), sanity 4/4 HIT; ctx 85.5k; 阶梯 [3,6,10,20,40]min + refresh 臂 G=40min ×2 周期; 1,357,559 tokens (硬上限 1.5M 内, 超 1M 目标 — bigfile 实测 62k 高于计划 22k)。
+- **TTL 窗口**: 存活 20m07s (×3), 40m09s 全量 MISS (cr=64) → **GLM TTL ∈ (20.1, 40.2] min** (n=1 MISS 单点)。
+- **读刷新 VERIFIED**: c1 (中点 100% 整读) 40m16s 处 100% 命中; c2 (中点 25% 部分+重写) 40m15s 处 100% 命中; 对照 40m09s MISS。
+- **通道工程教训** (对复现实验重要): 用户配置下插件 memory 注入会在轮间漂移前缀 (attempt-1 r2 31.5%), alwaysThinking+xhigh 使 "ok" 产生 4 内部轮; 须用干净 config + `--max-turns 1`。
+- **产品修复**: `--claude-dir` 覆盖时端点误判 STATIC_POLICY → 已修 (UNKNOWN/EMPIRICAL 降级 + 回归测试, 37 tests)。
+- **新事实入库**: ~21.4k 部分层 (3 次复现)、跨 session 分叉 ~768 tok、GLM cc 恒 0、cr 多为 256 倍数。
 
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 
@@ -147,14 +157,16 @@ scripts/schema-audit.mjs    # 重新审计真实 schema 的工具
 
 ## 7. Phase 2 (Cost Engine) 预研结论
 
-- 费率 (官方): cache read 0.1×、write 1.25×(5m)/2×(1h) 输入价; GLM 网关费率需另行确认 (coding plan 订阅制下"每次 miss 的成本"语义不同 — 可能以速率限制/延迟而非美元计价);
-- Verified vs Estimated Saving 分账规则: 只有 "保护后真实请求 telemetry 显示命中" 才计入 Verified;
-- Keepalive 成本 = 一次真实请求的 read+write+output; 决策式见原始愿景 §18。
+- 费率 (官方): cache read 0.1×、write 1.25×(5m)/2×(1h) 输入价; GLM Coding Plan **cached token 全额计配额、无折扣** (audit §1.5) → 本机环境下 Cost Engine 的核心是**配额账本** (每次 MISS = 全额重算 ~ctx tokens 配额), 而非美元;
+- Verified vs Estimated Saving 分账规则: 只有 "保护后真实请求 telemetry 显示命中" 才计入 Verified; refresh 语义已 VERIFIED → Verified Saving 的因果链闭合可行;
+- Keepalive 成本 = 一次 touch 请求的 ctx tokens (GLM 全额计配额); 决策式见原始愿景 §18, 逐出概率 (~21.4k 部分层现象) 需进入 P(存活) 项;
+- 关键参数 (实测): TTL 窗口 (20.1, 40.2]min → touch 间隔应 ≤20min 且明显小于窗口上限; 更细的间隔优化待 Phase 2 建模。
 
 ## 8. 下一步 (优先级序)
 
-1. ⬜ Phase 1.5 idle experiment (§5) — **gate for Phase 2**
-2. ⬜ watch 模式 soak test (挂一个真实工作日)
-3. ⬜ git 仓库初始化 + 首次提交 (用户确认后)
-4. ⬜ Phase 2 Cost Engine 设计文档
-5. ⬜ OTEL 通道原型 (duration_ms 维度)
+1. ✅ Phase 1.5 idle experiment — **gate PASSED** (2026-08-19)
+2. ✅ watch soak 首份数据 (180min 空闲 session); ⬜ 日间高频写入 soak (audit §2.3.2: 挂真实工作日)
+3. ✅ git 初始化 + 首次提交; ⬜ 远程仓库 (发布前确认 npm `cacheguard` 包名, audit 注: `cache-guard` 已被 caching.ai 占用)
+4. ⬜ Phase 2 Cost Engine 设计文档 (gate 已开; 逐出概率 + GLM 配额账本为一等输入)
+5. ⬜ OTEL 通道 spike (duration_ms 维度; audit §2.4.3)
+6. ⬜ audit §2.3.3: 目标客群需求验证 (GLM/中转站社区投放 status 截图)

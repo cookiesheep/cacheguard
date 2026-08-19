@@ -88,7 +88,8 @@ export function factsFromObservations(observations: CacheObservation[]): CacheFa
 export interface EstimatorInput {
   /** Deduped observations of the main thread (sidechains excluded). */
   observations: CacheObservation[];
-  baseUrl?: string | undefined;
+  /** null = endpoint explicitly unknown; see PolicyInput.baseUrl. */
+  baseUrl?: string | null | undefined;
   now?: number | undefined;
   atRiskThresholdMs?: number | undefined;
 }

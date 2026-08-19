@@ -22,8 +22,14 @@ export const ANTHROPIC_TTL_1H_MS = 60 * 60 * 1000;
 export interface PolicyInput {
   /** Most recent observations, oldest first, deduped. */
   observations: CacheObservation[];
-  /** Base URL the agent is configured with (settings.json), if any. */
-  baseUrl?: string | undefined;
+  /**
+   * Base URL the agent is configured with (settings.json), if any.
+   *  - undefined: not inspected → assume default Anthropic endpoint
+   *  - null: endpoint explicitly UNKNOWN (e.g. a --claude-dir override hid
+   *    the real settings) → never claim STATIC_POLICY
+   *  - string: parse it; only anthropic hosts get the static policy
+   */
+  baseUrl?: string | null | undefined;
   /** Model of the latest observation, if any. */
   model?: string | undefined;
 }
@@ -132,18 +138,22 @@ export function resolveTtlPolicy(input: PolicyInput): TtlPolicy {
     };
   }
 
-  // 2. Native Anthropic endpoint → documented policy.
+  // 2. Native Anthropic endpoint → documented policy. Claimed ONLY when the
+  //    endpoint was actually inspected and matches Anthropic; null (endpoint
+  //    unknown, e.g. --claude-dir override) must never masquerade as native.
   const native =
-    !input.baseUrl ||
-    (() => {
-      try {
-        const host = new URL(input.baseUrl).hostname;
-        return host === 'api.anthropic.com' || host.endsWith('.anthropic.com');
-      } catch {
-        return false;
-      }
-    })();
-  if (native) {
+    input.baseUrl === undefined
+      ? true
+      : (() => {
+          if (input.baseUrl === null) return false;
+          try {
+            const host = new URL(input.baseUrl).hostname;
+            return host === 'api.anthropic.com' || host.endsWith('.anthropic.com');
+          } catch {
+            return false;
+          }
+        })();
+  if (native && input.baseUrl !== null) {
     return {
       ttlMs: ANTHROPIC_TTL_5M_MS,
       source: 'STATIC_POLICY',
@@ -160,12 +170,12 @@ export function resolveTtlPolicy(input: PolicyInput): TtlPolicy {
   return {
     ttlMs: ANTHROPIC_TTL_5M_MS,
     source: 'UNKNOWN',
-    reason: `Non-Anthropic endpoint (${safeHost(input.baseUrl)}); no survival evidence yet. Countdown assumes 5m as a placeholder — treat as low confidence.`,
+    reason: `Non-Anthropic or unverified endpoint (${safeHost(input.baseUrl)}); no survival evidence yet. Countdown assumes 5m as a placeholder — treat as low confidence.`,
     reliability: 0.25,
   };
 }
 
-function safeHost(url?: string): string {
+function safeHost(url?: string | null): string {
   if (!url) return 'unspecified';
   try {
     return new URL(url).hostname;

@@ -34,7 +34,12 @@ export interface SessionStatus {
 export class SessionEngine {
   readonly adapter: ClaudeCodeAdapter;
   readonly store: CacheGuardStore;
-  readonly baseUrlHint: string | undefined;
+  /**
+   * undefined = default endpoint (no override, no explicit URL);
+   * null = endpoint explicitly unknown (--claude-dir override hid settings);
+   * string = the configured base URL.
+   */
+  readonly baseUrlHint: string | null | undefined;
   /** In-memory last state per session — used for edge-triggered TTL_RISK events. */
   private lastStateBySession = new Map<string, string>();
 
@@ -46,7 +51,9 @@ export class SessionEngine {
   ) {
     this.adapter = new ClaudeCodeAdapter(opts.claudeDirOverride);
     this.store = opts.store ?? new CacheGuardStore();
-    this.baseUrlHint = readBaseUrlHint(opts.claudeDirOverride);
+    this.baseUrlHint =
+      readBaseUrlHint(opts.claudeDirOverride) ??
+      (opts.claudeDirOverride ? null : undefined);
   }
 
   /** Discover sessions, most recently active first. */
