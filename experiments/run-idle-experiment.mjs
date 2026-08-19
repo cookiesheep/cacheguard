@@ -262,17 +262,24 @@ function statusJson(sessionId) {
   return JSON.parse(out);
 }
 
+async function callWithRetry(fn, label, attempts = 3) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    const r = await fn();
+    if (r.ok) return r;
+    lastErr = r;
+    log(`${label} attempt ${i + 1} failed (${r.error}); backoff 20s`);
+    await sleep(20_000);
+  }
+  return lastErr;
+}
+
 async function probe(stepId, { label, prevObsCount } = {}) {
   if (ckpt.steps[stepId]) return ckpt.steps[stepId];
   const before = prevObsCount ?? ckpt.obsCount;
   const t0 = Date.now();
-  let r = await runClaudeOnce('ok', ckpt.sessionId);
-  if (!r.ok) {
-    log(`probe ${stepId} failed once (${r.error}); retrying`);
-    await sleep(5_000);
-    r = await runClaudeOnce('ok', ckpt.sessionId);
-  }
-  if (!r.ok) throw new Error(`probe ${stepId}: claude failed twice: ${r.error}`);
+  const r = await callWithRetry(() => runClaudeOnce('ok', ckpt.sessionId), `probe ${stepId}`);
+  if (!r.ok) throw new Error(`probe ${stepId}: claude failed 3x: ${r.error}`);
   if (!ckpt.sessionId) ckpt.sessionId = r.sessionId;
 
   // wait until the product pipeline sees the new observation
@@ -408,10 +415,14 @@ async function phaseBuild() {
     const stepId = `build-${f}`;
     if (ckpt.steps[stepId]) continue;
     const before = ckpt.obsCount;
-    let r = await runClaudeOnce(
-      `Use the Read tool to read the file bigfile${f}.txt completely, then reply with exactly: done`,
-      ckpt.sessionId,
-      { maxTurns: 4 },
+    const r = await callWithRetry(
+      () =>
+        runClaudeOnce(
+          `Use the Read tool to read the file bigfile${f}.txt completely, then reply with exactly: done`,
+          ckpt.sessionId,
+          { maxTurns: 4 },
+        ),
+      `build-${f}`,
     );
     if (!r.ok) throw new Error(`build-${f}: ${r.error}`);
     let st = null;
@@ -488,6 +499,26 @@ async function phaseRefresh() {
   }
 }
 
+/**
+ * On resume, re-sync accounting with what the product pipeline has actually
+ * ingested for the session (covers steps executed outside the script, e.g.
+ * the manually-rerun build-1 after a transient gateway error).
+ */
+async function resyncFromPipeline() {
+  if (!ckpt.sessionId) return;
+  statusJson(ckpt.sessionId); // persists any unparsed tail into the DB
+  const all = store.observationsFor(ckpt.sessionId, 10_000);
+  ckpt.obsCount = all.length;
+  ckpt.budgetUsed = all.reduce(
+    (s, o) => s + (o.contextTokens ?? 0) + (o.outputTokens ?? 0),
+    0,
+  );
+  const latest = all[all.length - 1];
+  if (latest) ckpt.lastCtx = latest.contextTokens;
+  saveCkpt();
+  log(`resync: obs=${ckpt.obsCount} budget=${ckpt.budgetUsed} lastCtx=${ckpt.lastCtx}`);
+}
+
 async function main() {
   const estimate = printPlanAndEstimate();
   if (DRY) {
@@ -499,8 +530,9 @@ async function main() {
   }
   ensureLabFiles();
   log(`experiment start (session=${ckpt.sessionId ?? 'new'}, budgetUsed=${ckpt.budgetUsed})`);
+  await resyncFromPipeline();
 
-  if (!ckpt.steps['sanity-3']) await phaseSanity();
+  if (!ckpt.steps['sanity-4']) await phaseSanity();
   log(`channel: ${ckpt.channel}`);
   if (!ckpt.steps['build-done'] && (ckpt.lastCtx ?? 0) < CONTEXT_TARGET) await phaseBuild();
   ckpt.steps['build-done'] = true;
