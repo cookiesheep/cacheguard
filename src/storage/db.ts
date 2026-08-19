@@ -28,6 +28,7 @@ export class CacheGuardStore {
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
     this.db = new Database(dbPath);
     this.db.pragma('journal_mode = WAL');
+    this.db.pragma('busy_timeout = 5000'); // concurrent status/watch processes
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS sessions (
         session_id    TEXT PRIMARY KEY,
