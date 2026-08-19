@@ -4,3 +4,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# runtime artifacts
+.omc/
+experiments/.claude-home/
