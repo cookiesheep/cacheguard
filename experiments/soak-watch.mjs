@@ -20,31 +20,24 @@ if (!sessionIdArg || !durationArg) {
 
 async function resolveSessionId() {
   if (sessionIdArg !== 'auto') return sessionIdArg;
-  // Wait for the experiment to create its session in the lab project dir.
-  const { execFileSync } = await import('node:child_process');
-  for (let i = 0; i < 60; i++) {
+  // Wait for the experiment checkpoint to name its session.
+  const ckptPath = path.join(ROOT, 'experiments', 'checkpoint.json');
+  for (let i = 0; i < 80; i++) {
     try {
-      const out = execFileSync(
-        process.execPath,
-        [path.join(ROOT, 'dist', 'cli', 'index.js'), 'sessions'],
-        { cwd: ROOT, timeout: 30_000 },
-      ).toString();
-      const line = out.split('\n').find((l) => l.includes('experiments-lab'));
-      if (line) {
-        const sid = line.trim().split(/\s+/)[0];
-        if (sid && sid.length > 10) {
-          console.log(`soak auto-resolved session: ${sid}`);
-          return sid;
-        }
+      const ckpt = JSON.parse(fs.readFileSync(ckptPath, 'utf8'));
+      if (ckpt.sessionId) {
+        console.log(`soak resolved session from checkpoint: ${ckpt.sessionId}`);
+        return ckpt.sessionId;
       }
     } catch {}
     await new Promise((r) => setTimeout(r, 15_000));
   }
-  throw new Error('soak auto: no experiments-lab session found after 15min');
+  throw new Error('soak auto: checkpoint never named a session');
 }
 
 const sessionId = await resolveSessionId();
 const durationMs = Number(durationArg) * 60_000;
+const EXP_CLAUDE_HOME = path.join(ROOT, 'experiments', '.claude-home');
 
 const logDir = path.join(ROOT, 'experiments', 'logs');
 fs.mkdirSync(logDir, { recursive: true });
@@ -57,7 +50,7 @@ fs.writeFileSync(csvPath, 'timestamp_iso,elapsed_min,rss_kb\n');
 const errFd = fs.openSync(errPath, 'a');
 const child = spawn(
   process.execPath,
-  [path.join(ROOT, 'dist', 'cli', 'index.js'), 'watch', sessionId, '--interval', '2000'],
+  [path.join(ROOT, 'dist', 'cli', 'index.js'), '--claude-dir', EXP_CLAUDE_HOME, 'watch', sessionId, '--interval', '2000'],
   { cwd: ROOT, stdio: ['ignore', 'ignore', errFd] },
 );
 
@@ -80,7 +73,7 @@ function spawnWatch() {
   const fd = fs.openSync(errPath, 'a');
   const c = spawn(
     process.execPath,
-    [path.join(ROOT, 'dist', 'cli', 'index.js'), 'watch', sessionId, '--interval', '2000'],
+    [path.join(ROOT, 'dist', 'cli', 'index.js'), '--claude-dir', EXP_CLAUDE_HOME, 'watch', sessionId, '--interval', '2000'],
     { cwd: ROOT, stdio: ['ignore', 'ignore', fd] },
   );
   return c;

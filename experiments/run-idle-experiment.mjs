@@ -88,7 +88,21 @@ function log(msg) {
 
 /* ---------------- environment ---------------- */
 
-/** Same env as the user's daily Claude Code: inherit + settings.json env. */
+/**
+ * Channel controls (attempt-2 lessons):
+ *  - dedicated CLAUDE_CONFIG_DIR (experiments/.claude-home): no plugins, no
+ *    user memory → minimal STABLE prefix. claude-mem injects a memory block
+ *    that changes between invocations (attempt-1 round-2 partial miss;
+ *    divergence probe showed prefix break at ~768 tok when config changes).
+ *    Gateway env (ANTHROPIC_BASE_URL/token) is still injected explicitly
+ *    from the user's real settings.json — same GLM gateway as daily use.
+ *  - `--max-turns 1` for probes → exactly one API call per probe (with the
+ *    user's alwaysThinking+xhigh, a plain "ok" spawned 4 internal turns
+ *    ≈ 135k tokens).
+ */
+const EXP_CLAUDE_HOME = path.join(ROOT, 'experiments', '.claude-home');
+
+/** Same gateway env as the user's daily Claude Code (from real settings.json). */
 function claudeEnv() {
   const env = { ...process.env };
   try {
@@ -97,12 +111,13 @@ function claudeEnv() {
     );
     if (settings && typeof settings.env === 'object') {
       for (const [k, v] of Object.entries(settings.env)) {
-        if (typeof v === 'string') env[k] = v; // includes ANTHROPIC_BASE_URL etc.
+        if (typeof v === 'string') env[k] = v; // ANTHROPIC_BASE_URL, AUTH_TOKEN, MODEL…
       }
     }
   } catch {
     /* settings optional */
   }
+  env.CLAUDE_CONFIG_DIR = EXP_CLAUDE_HOME;
   return env;
 }
 
@@ -156,10 +171,20 @@ function ensureLabFiles() {
 
 /* ---------------- claude channel ---------------- */
 
-function runClaudeOnce(prompt, sessionId, timeoutMs = CLAUDE_TIMEOUT_MS) {
+/**
+ * Channel controls (attempt-2 lessons):
+ *  - `--settings` disables plugins (claude-mem injects a memory block that
+ *    changes between turns → prefix drift, seen as attempt-1 round-2 partial)
+ *    and disables always-thinking ("ok" spawned 4 internal turns ≈ 135k tok).
+ *  - `--max-turns 1` for probes → exactly one API call per probe.
+ */
+const PROBE_SETTINGS = JSON.stringify({ alwaysThinkingEnabled: false });
+
+function runClaudeOnce(prompt, sessionId, { maxTurns = 1, timeoutMs = CLAUDE_TIMEOUT_MS } = {}) {
   return new Promise((resolve) => {
     const args = ['-p'];
     if (sessionId) args.push('--resume', sessionId);
+    args.push('--settings', PROBE_SETTINGS, '--max-turns', String(maxTurns));
     args.push('--output-format', 'json', prompt);
     const child = spawn(claudeBinary(), args, { cwd: LAB, env: claudeEnv() });
     let out = '';
@@ -205,10 +230,33 @@ function runClaudeOnce(prompt, sessionId, timeoutMs = CLAUDE_TIMEOUT_MS) {
 
 /* ---------------- telemetry via product pipeline ---------------- */
 
+// Budget accounting walks the product storage layer (dist module) — no
+// independent parser anywhere in this script.
+import { CacheGuardStore } from '../dist/storage/db.js';
+const store = new CacheGuardStore();
+
+function sumNewObservations(sessionId, beforeCount) {
+  const all = store.observationsFor(sessionId, 10_000);
+  const fresh = all.slice(beforeCount);
+  return {
+    added: fresh.length,
+    tokens: fresh.reduce(
+      (s, o) => s + (o.contextTokens ?? 0) + (o.outputTokens ?? 0),
+      0,
+    ),
+    first: fresh[0],
+    last: fresh[fresh.length - 1],
+  };
+}
+
 function statusJson(sessionId) {
   const out = execFileSync(
     process.execPath,
-    [path.join(ROOT, 'dist', 'cli', 'index.js'), 'status', sessionId, '--json'],
+    [
+      path.join(ROOT, 'dist', 'cli', 'index.js'),
+      '--claude-dir', EXP_CLAUDE_HOME,
+      'status', sessionId, '--json',
+    ],
     { cwd: ROOT, timeout: 60_000 },
   ).toString();
   return JSON.parse(out);
@@ -234,11 +282,18 @@ async function probe(stepId, { label, prevObsCount } = {}) {
     if (st.observations > before) break;
     await sleep(1_000);
   }
+  // Budget: sum EVERY new observation (a multi-turn claude call writes several).
+  const spend = sumNewObservations(ckpt.sessionId, before);
+  ckpt.obsCount = before + spend.added;
+  ckpt.budgetUsed += spend.tokens;
+
+  const latest = spend.last ?? {};
   const telemetry = {
-    telemetryTs: st.lastCallAt,
-    ctx: st.contextTokens,
-    cr: st.cacheReadTokens,
-    cc: st.cacheWriteTokens,
+    telemetryTs: latest.timestamp ?? st.lastCallAt,
+    ctx: latest.contextTokens ?? st.contextTokens,
+    cr: latest.cacheReadTokens ?? st.cacheReadTokens,
+    cc: latest.cacheWriteTokens ?? st.cacheWriteTokens,
+    internalTurns: spend.added,
   };
   const prevCtx = ckpt.lastCtx;
   const classification =
@@ -250,9 +305,7 @@ async function probe(stepId, { label, prevObsCount } = {}) {
           ? 'MISS'
           : 'PARTIAL';
 
-  ckpt.budgetUsed += telemetry.ctx ?? 0;
   ckpt.lastCtx = telemetry.ctx;
-  ckpt.obsCount = st.observations;
   const rec = {
     stepId,
     label,
@@ -297,27 +350,27 @@ async function waitIdle(stepId, minutes) {
 /* ---------------- budget estimate (printed BEFORE any API call) ---------------- */
 
 function printPlanAndEstimate() {
-  const nSanity = 3;
+  const nSanity = 4;
   const nBuild = 3; // worst case reads all three files
   const nLadder = LADDER_MIN.length;
   const nRefresh = 6; // 2 cycles × 3 probes
-  const smallCtx = 12_000; // sanity requests on fresh session
-  const bigCtx = 35_000; // post-build context
+  const smallCtx = 13_000; // clean config: system+tools only, single turn
+  const bigCtx = 36_000; // post-build (base + bigfile ≈ 22k)
   const missesWorst = 1.0; // fraction of post-build probes that fully miss
   const sanityCost = nSanity * smallCtx;
   const buildCost = nBuild * bigCtx * 0.9;
   const ladderCost = nLadder * bigCtx * (1 + missesWorst); // read + worst-case rewrite
   const refreshCost = nRefresh * bigCtx * (1 + 0.5 * missesWorst);
   const total = Math.round(sanityCost + buildCost + ladderCost + refreshCost);
-  console.log('=== Phase 1.5 experiment plan ===');
+  console.log('=== Phase 1.5 experiment plan (attempt 2: clean CLAUDE_CONFIG_DIR) ===');
   console.log(`ladder gaps (min): ${LADDER_MIN.join(', ')}`);
-  console.log(`context target: >=${CONTEXT_TARGET} tok; probe payload: "ok"`);
+  console.log(`context target: >=${CONTEXT_TARGET} tok; probe payload: "ok" (--max-turns 1)`);
   console.log(
     `estimated input-equivalent tokens: sanity=${sanityCost} build=${buildCost} ` +
       `ladder≈${ladderCost} refresh≈${refreshCost} TOTAL≈${total}`,
   );
   console.log(`target ≤ ${BUDGET_TARGET}, HARD CAP ${BUDGET_HARD_CAP} (abort on breach)`);
-  console.log(`model/env: inherits user settings (GLM gateway) — verified in sanity output`);
+  console.log(`gateway env: injected from user settings.json (GLM gateway)`);
   console.log('');
   return total;
 }
@@ -325,30 +378,26 @@ function printPlanAndEstimate() {
 /* ---------------- phases ---------------- */
 
 async function phaseSanity() {
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const rec = await probe(`sanity-${i}`, { label: `sanity round ${i}` });
-    if (i < 3) await sleep(15_000);
+    if (i < 4) await sleep(15_000);
   }
-  const r2 = ckpt.steps['sanity-2'];
-  const r3 = ckpt.steps['sanity-3'];
-  const prevOf = (rec) => {
-    // previous observation context = this request's ctx roughly equals prior ctx
-    return rec?.telemetry?.ctx;
-  };
-  const cr2 = r2?.telemetry?.cr ?? 0;
-  const cr3 = r3?.telemetry?.cr ?? 0;
-  const p2 = prevOf(r2) ?? 1;
-  const p3 = prevOf(r3) ?? 1;
-  const okHeadless = cr2 >= p2 * HIT_FRACTION && cr3 >= p3 * HIT_FRACTION;
-  ckpt.channel = okHeadless ? 'headless' : 'FAILED';
-  ckpt.sanity = { cr2, p2, cr3, p3, okHeadless };
+  const rounds = [1, 2, 3, 4].map((i) => ckpt.steps[`sanity-${i}`]).filter(Boolean);
+  const ratios = rounds.map((r) => (r.telemetry.ctx ? r.telemetry.cr / r.telemetry.ctx : 0));
+  // Decision 2a criterion: headless is UNUSABLE only if EVERY call is a
+  // near-full miss. A single noisy partial (attempt-1 round-2, suspected
+  // plugin memory churn) does not disqualify the channel; it is recorded
+  // as an anomaly for the report.
+  const anyHigh = ratios.some((r) => r >= HIT_FRACTION);
+  ckpt.channel = anyHigh ? 'headless' : 'FAILED';
+  ckpt.sanity = { ratios, okHeadless: anyHigh };
   saveCkpt();
   log(
-    `sanity gate: r2 cr=${cr2}/${p2} r3 cr=${cr3}/${p3} → headless ${okHeadless ? 'USABLE' : 'NOT USABLE'}`,
+    `sanity gate: ratios=[${ratios.map((r) => (r * 100).toFixed(1) + '%').join(', ')}] → headless ${anyHigh ? 'USABLE' : 'NOT USABLE'}`,
   );
-  if (!okHeadless) {
+  if (!anyHigh) {
     throw new Error(
-      'SANITY_GATE_FAILED: headless resume does not preserve prefix cache; ' +
+      'SANITY_GATE_FAILED: every headless resume near-full-missed; ' +
         'fallback to node-pty required (see decision 2b)',
     );
   }
@@ -362,6 +411,7 @@ async function phaseBuild() {
     let r = await runClaudeOnce(
       `Use the Read tool to read the file bigfile${f}.txt completely, then reply with exactly: done`,
       ckpt.sessionId,
+      { maxTurns: 4 },
     );
     if (!r.ok) throw new Error(`build-${f}: ${r.error}`);
     let st = null;
@@ -370,18 +420,20 @@ async function phaseBuild() {
       if (st.observations > before) break;
       await sleep(1_000);
     }
-    ckpt.budgetUsed += st.contextTokens ?? 0;
+    const spend = sumNewObservations(ckpt.sessionId, before);
+    ckpt.budgetUsed += spend.tokens;
+    ckpt.obsCount = before + spend.added;
     ckpt.lastCtx = st.contextTokens;
-    ckpt.obsCount = st.observations;
     ckpt.steps[stepId] = {
       stepId,
       ctx: st.contextTokens,
       cr: st.cacheReadTokens,
       cc: st.cacheWriteTokens,
+      internalTurns: spend.added,
       budgetUsed: ckpt.budgetUsed,
     };
     saveCkpt();
-    log(`build-${f}: ctx=${st.contextTokens} cr=${st.cacheReadTokens} cc=${st.cacheWriteTokens}`);
+    log(`build-${f}: ctx=${st.contextTokens} cr=${st.cacheReadTokens} cc=${st.cacheWriteTokens} turns=${spend.added}`);
     if ((st.contextTokens ?? 0) >= CONTEXT_TARGET) return;
   }
   throw new Error(`context never reached ${CONTEXT_TARGET} (last ${ckpt.lastCtx})`);

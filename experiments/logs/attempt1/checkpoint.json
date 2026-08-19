@@ -1,0 +1,66 @@
+{
+  "startedAt": 1787146976582,
+  "phase": "lab",
+  "sessionId": "b41526b2-8369-44a4-8608-d6e013e11a22",
+  "steps": {
+    "sanity-1": {
+      "stepId": "sanity-1",
+      "label": "sanity round 1",
+      "wallStart": 1787146976591,
+      "wallEnd": 1787147086725,
+      "resultText": "PUA 核心协议已就位——会话启动时 Always-On hook 已注入完整行为协议（三条红线、升级链、阿里味都在），无参数路由指向的就是这套，不再重复加载（重复调 `pua:pua` 只会死循环）。\n\n先如实对齐两件事：\n\n1. **本会话零失败记录。** hook 把「ok」误判成了「用户不满」——这是全新会话，没有失败现场，就没有 L1 升级、没有「换个 fundamentally dif",
+      "telemetry": {
+        "telemetryTs": 1787147081694,
+        "ctx": 48715,
+        "cr": 48576,
+        "cc": 0
+      },
+      "classification": "UNKNOWN",
+      "budgetUsed": 48715
+    },
+    "sanity-2": {
+      "stepId": "sanity-2",
+      "label": "sanity round 2",
+      "wallStart": 1787147101742,
+      "wallEnd": 1787147128715,
+      "resultText": "收到。会话保持待命——目前没有收到具体任务。\n\n直接说下一步做什么即可，比如「继续 idle experiment」「看看 lab 目录结构」「提交代码」等。",
+      "telemetry": {
+        "telemetryTs": 1787147121687,
+        "ctx": 44223,
+        "cr": 13952,
+        "cc": 0
+      },
+      "classification": "PARTIAL",
+      "budgetUsed": 92938
+    },
+    "sanity-3": {
+      "stepId": "sanity-3",
+      "label": "sanity round 3",
+      "wallStart": 1787147143718,
+      "wallEnd": 1787147202108,
+      "resultText": "三连「ok」之后我主动看了一眼现场（owner 意识，不再空等）：\n\n**lab/ 目录实况**（读取已验证）：\n- `bigfile1.txt` / `bigfile2.txt` / `bigfile3.txt` — 三个完全同尺寸的文件（各 334,390 字节，今天 21:42 生成），像是缓存实验的测试夹具\n- `.omc/state/idle-notif-cooldown.json` —",
+      "telemetry": {
+        "telemetryTs": 1787147196199,
+        "ctx": 51295,
+        "cr": 50688,
+        "cc": 0
+      },
+      "classification": "HIT",
+      "budgetUsed": 144233
+    }
+  },
+  "budgetUsed": 144233,
+  "lastCtx": 51295,
+  "obsCount": 9,
+  "channel": "FAILED",
+  "notes": [
+    "fatal: Error: SANITY_GATE_FAILED: headless resume does not preserve prefix cache; fallback to node-pty required (see decision 2b)"
+  ],
+  "sanity": {
+    "cr2": 13952,
+    "p2": 44223,
+    "cr3": 50688,
+    "p3": 51295,
+    "okHeadless": false
+  }
+}
