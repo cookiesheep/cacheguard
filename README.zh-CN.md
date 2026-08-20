@@ -1,7 +1,7 @@
 # CacheGuard
 
 > **让 Coding Agent 的 Prompt Cache 看得见、算得清、值得时才保护。**
-> 面向 Claude Code 与 Codex 的只读 Prompt Cache 观测工具。本地优先、零网络、诚实的数字。
+> 面向 Claude Code / Codex / OpenCode 的只读 Prompt Cache 观测工具。本地优先、零网络、诚实的数字。
 
 *(英文主文档见 [README.md](README.md); 本文件为中文对照, 数字与能力声明以英文版为准。)*
 
@@ -72,6 +72,7 @@ TTL 永不写死: Anthropic 5m/1h 与 OpenAI GPT-5.6 30m 仅在官方文档适�
 |---|---|---|
 | Claude Code | Anthropic 5m/1h; 网关 → EMPIRICAL/UNKNOWN | 真实 session + 受控 idle 实验 (GLM: TTL ∈ (20,40]min, 读刷新 VERIFIED) |
 | Codex CLI | GPT-5.6+ = 30m; pre-5.6 = UNKNOWN + EMPIRICAL | 真实 session (gpt-5.4 / gpt-5.6) |
+| OpenCode | 模型家族驱动: claude-* → 5m, GPT-5.6+ → 30m, 其余 EMPIRICAL/UNKNOWN | 真实 session (gpt-5.4 系; 加法口径 23/23 实证) |
 
 ## 已知局限
 
@@ -83,7 +84,7 @@ TTL 永不写死: Anthropic 5m/1h 与 OpenAI GPT-5.6 30m 仅在官方文档适�
 
 ## Roadmap
 
-observe ✅ / cost ✅ / doctor ✅ / 归因深化 ⬜ / 更多 Agent (Cursor/OpenCode) ⬜ / **keepalive 明确缓行 — 仅在验证值得后才会做 (opt-in)**。
+observe ✅ / cost ✅ / doctor ✅ / 归因深化 ⬜ / 更多 Agent (Cursor) ⬜ / **keepalive 明确缓行 — 仅在验证值得后才会做 (opt-in)**。
 
 ## 开发
 

@@ -20,6 +20,7 @@
 | Round 5 — Cache Doctor + F3 + OTel spike | ✅ 完成 (2026-08-20) | 归因深化 (model-switch/重复残层/时间聚类) + 快照补全 6 模型 + OTel 结论=暂缓; 见 §5.8 |
 | Round 6 — 发布准备 (未发布) | ✅ 完成 (2026-08-20) | F4 账本确定性 + F5 法务 + 双语 README + 安装冒烟; 见 §5.9 |
 | Round 7 — statusline 集成 + CI | ✅ 完成 (2026-08-20) | 官方 statusline 通道 + 3 OS × node 22/24 CI; 见 §5.10 |
+| Round 8 — OpenCodeAdapter (第三 Agent) | ✅ 完成 (2026-08-20) | 真实数据验证 (opencode.db SQLite); 见 §5.11 |
 | Phase 2+ — Cost Engine 深化 | ⬜ | LiteLLM 快照导入、per-day 汇总 |
 | Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
@@ -207,6 +208,15 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 - **CI**: .github/workflows/ci.yml (ubuntu/windows/macos × node 22.x/24.x, install→build→test); 已 push 验证 (结果见 §摘要/Actions)。README 徽章 + 双语 statusline 配置文档。
 - **环境注记**: claude 2.1.236 的 segfault 已自愈 (新版修复), .old 绕过不再需要。
 - **自用 soak 问题**: 无新发现 (本轮修复的 codex-dir/FK 均为 R6 冒烟产物)。
+
+### 5.11 Round 8: OpenCodeAdapter 结论 (2026-08-20)
+
+- **真实数据发现** (又一次好运): 本机 opencode 1.3.17, 历史在 `~/.local/share/opencode/opencode.db` (SQLite/drizzle; storage/ 目录 1.3.x 只剩插件状态)。5 sessions / 34 messages, gpt-5.4 系。
+- **口径实证 (核心)**: 23/23 非退化消息精确满足 `total = input + output + reasoning + cache.read` → **加法口径** (input 不含 cached, 即使 provider=openai — OpenCode 归一化层做了减法); contextTokens = input+read+write, 与 Claude Code 同公式。3 条全零退化行走 F2 跳过。
+- **DB-backed 适配器** (首个非 JSONL 源): readonly 查询 session/message 两表最小列集; `part` 表 (对话正文) 从不查询; requestId=message.id (天然唯一); watch 用 2s 轮询重快照; `--opencode-dir` / `CACHEGUARD_OPENCODE_DIR` 覆盖。
+- **Policy**: 模型家族驱动 (与 codex 分支共用 + claude-* → 5m 静态); gpt-5.4 不在费率快照 → token 账 (本机实测输出正确)。
+- **顺手修**: sessions 列表改 per-agent top-15 (440+ codex 文件曾把其他 agent 挤出列表)。
+- 测试 94→105 (+11, 含真实脱敏 fixture tests/fixtures/opencode/real-derived.json)。
 
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 

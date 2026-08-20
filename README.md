@@ -3,7 +3,7 @@
 [![CI](https://github.com/cookiesheep/cacheguard/actions/workflows/ci.yml/badge.svg)](https://github.com/cookiesheep/cacheguard/actions/workflows/ci.yml)
 
 > **See your coding agent's prompt cache — before it expires.**
-> Read-only prompt-cache observability for Claude Code and Codex. Local-first, zero network, honest numbers.
+> Read-only prompt-cache observability for Claude Code, Codex, and OpenCode. Local-first, zero network, honest numbers.
 
 When you step away from a coding agent to read code or think, its prompt cache is quietly dying. Come back after the TTL and the entire conversation is re-prefilled from scratch — slower, and charged at full input price. You never see any of it.
 
@@ -104,6 +104,7 @@ TTL is never hardcoded: static policy (Anthropic 5m/1h, OpenAI GPT-5.6 30m) appl
 |---|---|---|---|
 | Claude Code | `~/.claude/projects/**/*.jsonl` | Anthropic 5m/1h docs; gateways → empirical/UNKNOWN | real sessions incl. a controlled idle experiment (GLM gateway: TTL ∈ (20, 40] min, read-refresh verified) |
 | Codex CLI | `~/.codex/sessions/**/rollout-*.jsonl` | GPT-5.6+ → documented 30m; pre-5.6 → UNKNOWN (5–10min vs 24h retention cannot be distinguished locally) + empirical | real sessions (gpt-5.4, gpt-5.6) |
+| OpenCode | `~/.local/share/opencode/opencode.db` (SQLite, readonly) | model-family driven: claude-* → 5m, GPT-5.6+ → 30m, else EMPIRICAL/UNKNOWN | real sessions (gpt-5.4 / gpt-5.4-mini; additive token accounting verified 23/23) |
 
 ## Install & quickstart
 
@@ -166,7 +167,7 @@ Design notes: it reads only a 1MB session tail (pipeline P95 ≈ 5ms, never touc
 - ✅ **Calculate** — dual ledger (verified bleed / estimated exposure), pricing snapshot, quota mode
 - ✅ **Diagnose** — doctor: attribution signals, recurring layers, evidence-tied advice
 - ⬜ Attribution deepening & per-day ledgers
-- ⬜ More agents (Cursor, OpenCode — adapter interface is ready)
+- ⬜ More agents (Cursor — adapter interface is ready)
 - ⏸ **Auto-protect / keepalive — deliberately deferred.** We will only build it if the economics prove worth it (and it will be opt-in). CacheGuard stays read-only until then.
 
 ## Development
@@ -176,7 +177,7 @@ npm install && npm run build && npm test    # 87 tests
 npm run schema-audit                        # re-audit your local agent schemas
 ```
 
-Docs: [architecture](docs/architecture.md) · [Claude Code schema](docs/claude-code-schema.md) · [Codex schema](docs/codex-schema.md) · [cost engine](docs/cost-engine.md) · [doctor](docs/doctor.md) · [development plan](docs/development-plan.md)
+Docs: [architecture](docs/architecture.md) · [Claude Code schema](docs/claude-code-schema.md) · [Codex schema](docs/codex-schema.md) · [OpenCode schema](docs/opencode-schema.md) · [cost engine](docs/cost-engine.md) · [doctor](docs/doctor.md) · [development plan](docs/development-plan.md)
 
 中文文档: [README.zh-CN.md](README.zh-CN.md)
 

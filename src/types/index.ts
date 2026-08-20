@@ -6,7 +6,7 @@
  * (estimates) are strictly separated types — never merge them.
  */
 
-export type AgentKind = 'claude-code' | 'codex';
+export type AgentKind = 'claude-code' | 'codex' | 'opencode';
 
 /** One LLM API response, as recovered from local telemetry. This is a FACT. */
 export interface CacheObservation {

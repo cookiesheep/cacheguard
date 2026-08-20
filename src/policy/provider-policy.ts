@@ -141,8 +141,20 @@ export function resolveTtlPolicy(input: PolicyInput): TtlPolicy {
   //   Custom providers (session_meta.model_provider != openai) may deviate
   //   from the documented regime; noted in the reason, reliability lowered.
   const agent = input.agent ?? observations[observations.length - 1]?.agent;
-  if (agent === 'codex') {
+  // Codex and OpenCode both normalize usage per model family; OpenCode users
+  // ride many providers, so the same model-driven rules apply (verified
+  // against OpenCode's additive token semantics — docs/opencode-schema.md).
+  if (agent === 'codex' || agent === 'opencode') {
     const model = input.model ?? observations[observations.length - 1]?.model;
+    if (model && /^claude/i.test(model)) {
+      // Anthropic models via OpenCode: documented 5m default.
+      return {
+        ttlMs: ANTHROPIC_TTL_5M_MS,
+        source: 'STATIC_POLICY',
+        reason: `${model} via OpenCode: Anthropic documented 5-minute TTL (provider-routed models may deviate).`,
+        reliability: 0.8,
+      };
+    }
     if (model && isGpt56Family(model)) {
       return {
         ttlMs: CODEX_TTL_30M_MS,

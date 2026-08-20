@@ -25,7 +25,8 @@ program
   .version('0.1.0')
   .option('--no-color', 'disable ANSI colors')
   .option('--claude-dir <path>', 'override ~/.claude location')
-  .option('--codex-dir <path>', 'override ~/.codex location');
+  .option('--codex-dir <path>', 'override ~/.codex location')
+  .option('--opencode-dir <path>', 'override OpenCode data location');
 
 function colorEnabled(opts: { color?: boolean }): boolean {
   return opts.color !== false && process.stdout.isTTY === true;
@@ -62,10 +63,11 @@ program
   .option('--snapshot-bytes <n>', 'bytes of the session tail to parse', '4194304')
   .option('--json', 'machine-readable output')
   .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     try {
       const session = await pickSession(engine, sessionId);
@@ -121,10 +123,11 @@ program
   .argument('[sessionId]', 'session id (prefix match) or file path')
   .option('--interval <ms>', 're-render interval', '1000')
   .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     let first = true;
     let current: Parameters<typeof renderStatus>[0] | null = null;
@@ -164,10 +167,11 @@ program
   .command('sessions')
   .description('list discovered sessions, most recent first')
   .action(async () => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     try {
       const sessions = await engine.discover();
@@ -176,7 +180,16 @@ program
         return;
       }
       console.log('AGENT        SESSION                               PROJECT                        REGISTRY     LAST ACTIVITY');
-      for (const s of sessions.slice(0, 25)) {
+      // Per-agent top-N: hundreds of codex rollouts must not crowd the
+      // other agents out of the listing.
+      const shown = new Set<ReturnType<typeof Object>>();
+      let printed = 0;
+      const perAgent = new Map<string, number>();
+      for (const s of sessions) {
+        if ((perAgent.get(s.agent) ?? 0) >= 15) continue;
+        perAgent.set(s.agent, (perAgent.get(s.agent) ?? 0) + 1);
+        shown.add(s as never);
+        printed++;
         const activity = Math.max(s.modifiedAt, s.registry?.updatedAt ?? 0);
         const ago = fmtDuration(Date.now() - activity);
         console.log(
@@ -189,6 +202,7 @@ program
           ].join(''),
         );
       }
+      if (sessions.length > printed) console.log(`… ${sessions.length - printed} more sessions`);
     } finally {
       engine.store.close();
     }
@@ -199,10 +213,11 @@ program
   .description('recent cache events for a session')
   .argument('[sessionId]', 'session id (defaults to most recent discovered)')
   .action(async (sessionId: string | undefined) => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     try {
       const session = await pickSession(engine, sessionId);
@@ -228,10 +243,11 @@ program
   .option('--all', 'aggregate view across all sessions in the local DB')
   .option('--json', 'machine-readable output')
   .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     try {
       if (cmdOpts.all) {
@@ -263,10 +279,11 @@ program
   .argument('[sessionId]', 'session id (prefix match); defaults to most recent')
   .option('--json', 'machine-readable output')
   .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     try {
       const session = await pickSession(engine, sessionId);
@@ -300,10 +317,11 @@ program
   .description('parse a full session file into the local DB (bounded memory, line-by-line)')
   .argument('<sessionId|path>', 'session id (prefix match) or JSONL path')
   .action(async (sessionArg: string) => {
-    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string; opencodeDir?: string };
     const engine = new SessionEngine({
       claudeDirOverride: globals.claudeDir,
       codexDirOverride: globals.codexDir,
+      opencodeDirOverride: globals.opencodeDir,
     });
     try {
       const session = await pickSession(engine, sessionArg);

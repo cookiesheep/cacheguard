@@ -63,7 +63,13 @@ export function renderStatus(status: SessionStatus, opts: RenderOptions = {}): s
   const bold = (s: string) => (color ? `${BOLD}${s}${RESET}` : s);
 
   const agentLabel =
-    session.agent === 'codex' ? 'Codex' : session.agent === 'claude-code' ? 'Claude Code' : session.agent;
+    session.agent === 'codex'
+      ? 'Codex'
+      : session.agent === 'opencode'
+        ? 'OpenCode'
+        : session.agent === 'claude-code'
+          ? 'Claude Code'
+          : session.agent;
   const version = session.registry?.version ?? latest?.agentVersion;
   lines.push(bold('CacheGuard') + dim(' — read-only cache observability'));
   lines.push('');

@@ -1,0 +1,1002 @@
+[
+  {
+    "name": "v1.1.27",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.27",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.27",
+    "commit": {
+      "sha": "e521fee0023a604bb6d5ef39b4b892cbf1a0f9d4",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/e521fee0023a604bb6d5ef39b4b892cbf1a0f9d4"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yNw"
+  },
+  {
+    "name": "v1.1.26",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.26",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.26",
+    "commit": {
+      "sha": "1ee8a9c0b2211dad0008bc8291185a98ded8f3dd",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/1ee8a9c0b2211dad0008bc8291185a98ded8f3dd"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yNg"
+  },
+  {
+    "name": "v1.1.25",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.25",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.25",
+    "commit": {
+      "sha": "968239bb76f953385e7c363806c143536f2e5139",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/968239bb76f953385e7c363806c143536f2e5139"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yNQ"
+  },
+  {
+    "name": "v1.1.24",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.24",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.24",
+    "commit": {
+      "sha": "bc3616d9c636b885bdf322ead70217b216a90cda",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/bc3616d9c636b885bdf322ead70217b216a90cda"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yNA"
+  },
+  {
+    "name": "v1.1.23",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.23",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.23",
+    "commit": {
+      "sha": "df8e6e601416363b7b620f953ec9b2f1b59ba11a",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/df8e6e601416363b7b620f953ec9b2f1b59ba11a"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yMw"
+  },
+  {
+    "name": "v1.1.21",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.21",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.21",
+    "commit": {
+      "sha": "99a1e73fa1bd5c92c02abd8a20b0e274d5b0d214",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/99a1e73fa1bd5c92c02abd8a20b0e274d5b0d214"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yMQ"
+  },
+  {
+    "name": "v1.1.20",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.20",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.20",
+    "commit": {
+      "sha": "09ff3b9bb925903b36aa35fec25394133a42cf6d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/09ff3b9bb925903b36aa35fec25394133a42cf6d"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4yMA"
+  },
+  {
+    "name": "v1.1.19",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.19",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.19",
+    "commit": {
+      "sha": "3565d8e44dbbfead2a670f20010705a4a43d145e",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/3565d8e44dbbfead2a670f20010705a4a43d145e"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xOQ"
+  },
+  {
+    "name": "v1.1.18",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.18",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.18",
+    "commit": {
+      "sha": "c87939ad122a79150fa6360dacfdef63ea396b2d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/c87939ad122a79150fa6360dacfdef63ea396b2d"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xOA"
+  },
+  {
+    "name": "v1.1.17",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.17",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.17",
+    "commit": {
+      "sha": "29bf731d47da1cda99de2c9890d525045b1bc8e8",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/29bf731d47da1cda99de2c9890d525045b1bc8e8"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xNw"
+  },
+  {
+    "name": "v1.1.16",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.16",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.16",
+    "commit": {
+      "sha": "afb8a0d28a28795dd51128729250d57e8285106b",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/afb8a0d28a28795dd51128729250d57e8285106b"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xNg"
+  },
+  {
+    "name": "v1.1.15",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.15",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.15",
+    "commit": {
+      "sha": "db7243c3647f96c80e18f07290926046bef21d8d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/db7243c3647f96c80e18f07290926046bef21d8d"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xNQ"
+  },
+  {
+    "name": "v1.1.14",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.14",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.14",
+    "commit": {
+      "sha": "7c6b3f981e56b94b5948619d23e7312a7c7583c0",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/7c6b3f981e56b94b5948619d23e7312a7c7583c0"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xNA"
+  },
+  {
+    "name": "v1.1.13",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.13",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.13",
+    "commit": {
+      "sha": "efbab087df781ff5b5c738c8421d8789f50ee7af",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/efbab087df781ff5b5c738c8421d8789f50ee7af"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xMw"
+  },
+  {
+    "name": "v1.1.12",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.12",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.12",
+    "commit": {
+      "sha": "449270aacc54f43c0cdb3a88f3aaf13f41b50232",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/449270aacc54f43c0cdb3a88f3aaf13f41b50232"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xMg"
+  },
+  {
+    "name": "v1.1.11",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.11",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.11",
+    "commit": {
+      "sha": "8a43c249347c8b3bad0e500d0054b70f46582252",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/8a43c249347c8b3bad0e500d0054b70f46582252"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xMQ"
+  },
+  {
+    "name": "v1.1.10",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.10",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.10",
+    "commit": {
+      "sha": "563b4c33f2bace782403de88e60de4f9167a3c93",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/563b4c33f2bace782403de88e60de4f9167a3c93"
+    },
+    "node_id": "REF_kwDOOiiGL7FyZWZzL3RhZ3MvdjEuMS4xMA"
+  },
+  {
+    "name": "v1.1.8",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.8",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.8",
+    "commit": {
+      "sha": "bd9c13bb27e6a375f0232ed383213bc86c77387d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/bd9c13bb27e6a375f0232ed383213bc86c77387d"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS44"
+  },
+  {
+    "name": "v1.1.7",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.7",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.7",
+    "commit": {
+      "sha": "f3e79235fb4f4c376f7ced5e933c17179d31cc64",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/f3e79235fb4f4c376f7ced5e933c17179d31cc64"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS43"
+  },
+  {
+    "name": "v1.1.6",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.6",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.6",
+    "commit": {
+      "sha": "184834da980cb50c442a192b88397d634901abe2",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/184834da980cb50c442a192b88397d634901abe2"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS42"
+  },
+  {
+    "name": "v1.1.5",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.5",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.5",
+    "commit": {
+      "sha": "1e2992244fa84c74000c5c8c9e5566232744a030",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/1e2992244fa84c74000c5c8c9e5566232744a030"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS41"
+  },
+  {
+    "name": "v1.1.4",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.4",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.4",
+    "commit": {
+      "sha": "b2341c2d9a4b34d96181003deedee3daafa16d94",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/b2341c2d9a4b34d96181003deedee3daafa16d94"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS40"
+  },
+  {
+    "name": "v1.1.3",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.3",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.3",
+    "commit": {
+      "sha": "4f4996751853dbc77f91730329503ea86292aae4",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/4f4996751853dbc77f91730329503ea86292aae4"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS4z"
+  },
+  {
+    "name": "v1.1.2",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.2",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.2",
+    "commit": {
+      "sha": "4d187af9d20b04e4fbd77ad04eaaea241b8e25bf",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/4d187af9d20b04e4fbd77ad04eaaea241b8e25bf"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS4y"
+  },
+  {
+    "name": "v1.1.1",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.1.1",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.1.1",
+    "commit": {
+      "sha": "dc25669b6e14ee7730ae9ab5d3d5e876e2111fb0",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/dc25669b6e14ee7730ae9ab5d3d5e876e2111fb0"
+    },
+    "node_id": "REF_kwDOOiiGL7ByZWZzL3RhZ3MvdjEuMS4x"
+  },
+  {
+    "name": "v1.0.224",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.224",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.224",
+    "commit": {
+      "sha": "d60393835c5c40351d804f0e94013922c34b38bf",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/d60393835c5c40351d804f0e94013922c34b38bf"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMjQ"
+  },
+  {
+    "name": "v1.0.223",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.223",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.223",
+    "commit": {
+      "sha": "01237c5325f5c3eda142f459b22f902b5aa07d7c",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/01237c5325f5c3eda142f459b22f902b5aa07d7c"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMjM"
+  },
+  {
+    "name": "v1.0.222",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.222",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.222",
+    "commit": {
+      "sha": "3331b0600aa6f2fae65609ffe870ca155fba7b25",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/3331b0600aa6f2fae65609ffe870ca155fba7b25"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMjI"
+  },
+  {
+    "name": "v1.0.221",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.221",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.221",
+    "commit": {
+      "sha": "c93e7621bec6d9e0088dc64ff25c0d61f43ccbb6",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/c93e7621bec6d9e0088dc64ff25c0d61f43ccbb6"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMjE"
+  },
+  {
+    "name": "v1.0.220",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.220",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.220",
+    "commit": {
+      "sha": "decc616c800827e1e28c96fe2253ee229095dc23",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/decc616c800827e1e28c96fe2253ee229095dc23"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMjA"
+  },
+  {
+    "name": "v1.0.219",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.219",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.219",
+    "commit": {
+      "sha": "8aa34ab9f37dafaa057c0a9e121d00b7048432ab",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/8aa34ab9f37dafaa057c0a9e121d00b7048432ab"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTk"
+  },
+  {
+    "name": "v1.0.218",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.218",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.218",
+    "commit": {
+      "sha": "2039c6936f56d679fae9e48cdf0d33727ab64c00",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/2039c6936f56d679fae9e48cdf0d33727ab64c00"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTg"
+  },
+  {
+    "name": "v1.0.217",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.217",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.217",
+    "commit": {
+      "sha": "585378cba0230bb2dde97a7ddf7f9d1eac7b395e",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/585378cba0230bb2dde97a7ddf7f9d1eac7b395e"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTc"
+  },
+  {
+    "name": "v1.0.216",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.216",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.216",
+    "commit": {
+      "sha": "9b04081ae0515facfaca56f22c315abcd69a797e",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/9b04081ae0515facfaca56f22c315abcd69a797e"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTY"
+  },
+  {
+    "name": "v1.0.215",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.215",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.215",
+    "commit": {
+      "sha": "73bc3e704ecbb3c49e52f10c4ca4f56547265c64",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/73bc3e704ecbb3c49e52f10c4ca4f56547265c64"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTU"
+  },
+  {
+    "name": "v1.0.214",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.214",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.214",
+    "commit": {
+      "sha": "104d52bc383ec249e6946fee68eb07edf4209fab",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/104d52bc383ec249e6946fee68eb07edf4209fab"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTQ"
+  },
+  {
+    "name": "v1.0.213",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.213",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.213",
+    "commit": {
+      "sha": "a1d54475feb7899d6ef60303c801358f5a64989d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/a1d54475feb7899d6ef60303c801358f5a64989d"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTM"
+  },
+  {
+    "name": "v1.0.212",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.212",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.212",
+    "commit": {
+      "sha": "faaef45384e1fdd627576a90764caa8f7f806b02",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/faaef45384e1fdd627576a90764caa8f7f806b02"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTI"
+  },
+  {
+    "name": "v1.0.211",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.211",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.211",
+    "commit": {
+      "sha": "281f9e623673e6bbfd9a5f9a8f9aae496abc99f2",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/281f9e623673e6bbfd9a5f9a8f9aae496abc99f2"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTE"
+  },
+  {
+    "name": "v1.0.210",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.210",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.210",
+    "commit": {
+      "sha": "f54d5377a4a7a1fdc30d7083fede477b185bac73",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/f54d5377a4a7a1fdc30d7083fede477b185bac73"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMTA"
+  },
+  {
+    "name": "v1.0.209",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.209",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.209",
+    "commit": {
+      "sha": "0c48e6a116dc8541726ab0dad2effc5749cc9a6a",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/0c48e6a116dc8541726ab0dad2effc5749cc9a6a"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDk"
+  },
+  {
+    "name": "v1.0.208",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.208",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.208",
+    "commit": {
+      "sha": "9721223b7e8c56e5dc4eefd1370cb745c86eaa2d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/9721223b7e8c56e5dc4eefd1370cb745c86eaa2d"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDg"
+  },
+  {
+    "name": "v1.0.207",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.207",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.207",
+    "commit": {
+      "sha": "76880dce0d67998c03f9dbb162f4f91f1a762a47",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/76880dce0d67998c03f9dbb162f4f91f1a762a47"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDc"
+  },
+  {
+    "name": "v1.0.206",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.206",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.206",
+    "commit": {
+      "sha": "2abaa46e23352b133f327dba5bca6a1415712028",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/2abaa46e23352b133f327dba5bca6a1415712028"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDY"
+  },
+  {
+    "name": "v1.0.205",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.205",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.205",
+    "commit": {
+      "sha": "ddf4897eaa7580bbc473923f4d3026a628e58a65",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/ddf4897eaa7580bbc473923f4d3026a628e58a65"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDU"
+  },
+  {
+    "name": "v1.0.204",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.204",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.204",
+    "commit": {
+      "sha": "7aecb43e846eea4c383a29bf6a224db909ac474a",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/7aecb43e846eea4c383a29bf6a224db909ac474a"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDQ"
+  },
+  {
+    "name": "v1.0.203",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.203",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.203",
+    "commit": {
+      "sha": "7cc4b24ac2a57ab46e0dcbc3f1cb91d5f1c011be",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/7cc4b24ac2a57ab46e0dcbc3f1cb91d5f1c011be"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDM"
+  },
+  {
+    "name": "v1.0.202",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.202",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.202",
+    "commit": {
+      "sha": "effa7b45cfadc8a53b073f1375281a9de6ada670",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/effa7b45cfadc8a53b073f1375281a9de6ada670"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDI"
+  },
+  {
+    "name": "v1.0.201",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.201",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.201",
+    "commit": {
+      "sha": "8aa35206838fec34c5ab0640cb5bef57cbadb78c",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/8aa35206838fec34c5ab0640cb5bef57cbadb78c"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDE"
+  },
+  {
+    "name": "v1.0.200",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.200",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.200",
+    "commit": {
+      "sha": "6f9bea4e1f3d139feefd0f88de260b04f78caaef",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/6f9bea4e1f3d139feefd0f88de260b04f78caaef"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4yMDA"
+  },
+  {
+    "name": "v1.0.199",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.199",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.199",
+    "commit": {
+      "sha": "2284a4e6dfc18126d9a2589e987ff546da7ef25c",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/2284a4e6dfc18126d9a2589e987ff546da7ef25c"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTk"
+  },
+  {
+    "name": "v1.0.198",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.198",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.198",
+    "commit": {
+      "sha": "ff3b68bd361b05e6ec131f752d209e6845ffeeb4",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/ff3b68bd361b05e6ec131f752d209e6845ffeeb4"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTg"
+  },
+  {
+    "name": "v1.0.197",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.197",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.197",
+    "commit": {
+      "sha": "987e44482820709a7663665eca8174d5b62d1f8d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/987e44482820709a7663665eca8174d5b62d1f8d"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTc"
+  },
+  {
+    "name": "v1.0.196",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.196",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.196",
+    "commit": {
+      "sha": "ceeaf494c4c491982c7164534c766795a2c6d70b",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/ceeaf494c4c491982c7164534c766795a2c6d70b"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTY"
+  },
+  {
+    "name": "v1.0.195",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.195",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.195",
+    "commit": {
+      "sha": "a2e8737114626563be92d41025d4b1f2cf0ab695",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/a2e8737114626563be92d41025d4b1f2cf0ab695"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTU"
+  },
+  {
+    "name": "v1.0.194",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.194",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.194",
+    "commit": {
+      "sha": "376019e347afa997a50123566da4bd1648fce8ad",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/376019e347afa997a50123566da4bd1648fce8ad"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTQ"
+  },
+  {
+    "name": "v1.0.193",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.193",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.193",
+    "commit": {
+      "sha": "66563fb9741b6b7d6e4456c58b431d2231a1810a",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/66563fb9741b6b7d6e4456c58b431d2231a1810a"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTM"
+  },
+  {
+    "name": "v1.0.192",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.192",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.192",
+    "commit": {
+      "sha": "c81721e9fca64fef931094c9ceef5524874cd7a1",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/c81721e9fca64fef931094c9ceef5524874cd7a1"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTI"
+  },
+  {
+    "name": "v1.0.191",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.191",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.191",
+    "commit": {
+      "sha": "83397ebde21c56fcc5d79308f95b4832e3ec9cc9",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/83397ebde21c56fcc5d79308f95b4832e3ec9cc9"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTE"
+  },
+  {
+    "name": "v1.0.190",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.190",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.190",
+    "commit": {
+      "sha": "92c0ab51e22bba943acf83fc9bb873ec9137ffb3",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/92c0ab51e22bba943acf83fc9bb873ec9137ffb3"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xOTA"
+  },
+  {
+    "name": "v1.0.189",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.189",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.189",
+    "commit": {
+      "sha": "b9029afa22e7fc1226f3352c972b93244c2165bb",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/b9029afa22e7fc1226f3352c972b93244c2165bb"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODk"
+  },
+  {
+    "name": "v1.0.188",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.188",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.188",
+    "commit": {
+      "sha": "38551bda38660c7e2ddbd25f960d48e2236ead19",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/38551bda38660c7e2ddbd25f960d48e2236ead19"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODg"
+  },
+  {
+    "name": "v1.0.187",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.187",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.187",
+    "commit": {
+      "sha": "e4d8a117c4c4990a3c64a0ebf6699dcc743da644",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/e4d8a117c4c4990a3c64a0ebf6699dcc743da644"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODc"
+  },
+  {
+    "name": "v1.0.186",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.186",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.186",
+    "commit": {
+      "sha": "c6e9a5c800f7b65f5e7138628443248bed88ecd2",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/c6e9a5c800f7b65f5e7138628443248bed88ecd2"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODY"
+  },
+  {
+    "name": "v1.0.185",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.185",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.185",
+    "commit": {
+      "sha": "cb8af962cdf20a4d4e0aff3f0db9e70de14d1c84",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/cb8af962cdf20a4d4e0aff3f0db9e70de14d1c84"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODU"
+  },
+  {
+    "name": "v1.0.184",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.184",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.184",
+    "commit": {
+      "sha": "f53ebafbab35348b131edee238ec16a848094fa2",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/f53ebafbab35348b131edee238ec16a848094fa2"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODQ"
+  },
+  {
+    "name": "v1.0.183",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.183",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.183",
+    "commit": {
+      "sha": "9d48fd4bbdd74770bf4d8a59a476b1bbc0b9d817",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/9d48fd4bbdd74770bf4d8a59a476b1bbc0b9d817"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODM"
+  },
+  {
+    "name": "v1.0.182",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.182",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.182",
+    "commit": {
+      "sha": "0b046d6cf09ba65d0efa20cf20e061c306142c1b",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/0b046d6cf09ba65d0efa20cf20e061c306142c1b"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODI"
+  },
+  {
+    "name": "v1.0.181",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.181",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.181",
+    "commit": {
+      "sha": "f9cef22a531e70013f7c8a649a9ae6ae3e515bed",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/f9cef22a531e70013f7c8a649a9ae6ae3e515bed"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODE"
+  },
+  {
+    "name": "v1.0.180",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.180",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.180",
+    "commit": {
+      "sha": "c87d61b5615eaf301ba6ac1e0288bd778350b920",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/c87d61b5615eaf301ba6ac1e0288bd778350b920"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xODA"
+  },
+  {
+    "name": "v1.0.179",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.179",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.179",
+    "commit": {
+      "sha": "33d8bfc93785fc3349839dc5b77d7497a1dd2501",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/33d8bfc93785fc3349839dc5b77d7497a1dd2501"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzk"
+  },
+  {
+    "name": "v1.0.178",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.178",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.178",
+    "commit": {
+      "sha": "6a4f4009d52fc6934414118a0a7cbca0d532e7ea",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/6a4f4009d52fc6934414118a0a7cbca0d532e7ea"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzg"
+  },
+  {
+    "name": "v1.0.177",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.177",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.177",
+    "commit": {
+      "sha": "f29f284b3e076c337316a89dd9b0c4bfb93589eb",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/f29f284b3e076c337316a89dd9b0c4bfb93589eb"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzc"
+  },
+  {
+    "name": "v1.0.176",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.176",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.176",
+    "commit": {
+      "sha": "4c3336bbe725ce8bf1a3dab09a805532a1fc2b47",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/4c3336bbe725ce8bf1a3dab09a805532a1fc2b47"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzY"
+  },
+  {
+    "name": "v1.0.175",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.175",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.175",
+    "commit": {
+      "sha": "2400354bab91b16f12f8287517fd591b8a750545",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/2400354bab91b16f12f8287517fd591b8a750545"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzU"
+  },
+  {
+    "name": "v1.0.174",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.174",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.174",
+    "commit": {
+      "sha": "34bdfd0937699d4f4e9f3b8649e2c7a7c8b86c7e",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/34bdfd0937699d4f4e9f3b8649e2c7a7c8b86c7e"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzQ"
+  },
+  {
+    "name": "v1.0.173",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.173",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.173",
+    "commit": {
+      "sha": "9f5db469114d80efb3efae2dd617148bad34ba4d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/9f5db469114d80efb3efae2dd617148bad34ba4d"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzM"
+  },
+  {
+    "name": "v1.0.172",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.172",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.172",
+    "commit": {
+      "sha": "39e2a5f5957645465b3976f8606c5d3a25dc1db7",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/39e2a5f5957645465b3976f8606c5d3a25dc1db7"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzI"
+  },
+  {
+    "name": "v1.0.171",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.171",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.171",
+    "commit": {
+      "sha": "129d4f0b1b168cb51101a65f92434f82701ec86d",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/129d4f0b1b168cb51101a65f92434f82701ec86d"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzE"
+  },
+  {
+    "name": "v1.0.170",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.170",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.170",
+    "commit": {
+      "sha": "55d62fbd9f2a728c78f7fc9f5af985268a1b9f99",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/55d62fbd9f2a728c78f7fc9f5af985268a1b9f99"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNzA"
+  },
+  {
+    "name": "v1.0.169",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.169",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.169",
+    "commit": {
+      "sha": "289f4abaaa90f7b8e1d6b49169ae260d46ceeecd",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/289f4abaaa90f7b8e1d6b49169ae260d46ceeecd"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjk"
+  },
+  {
+    "name": "v1.0.168",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.168",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.168",
+    "commit": {
+      "sha": "427157c683853604f96f09586c5aa92668cc0ee1",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/427157c683853604f96f09586c5aa92668cc0ee1"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjg"
+  },
+  {
+    "name": "v1.0.167",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.167",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.167",
+    "commit": {
+      "sha": "194ff4919cd1e68caaaa8336da0b13b815c74072",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/194ff4919cd1e68caaaa8336da0b13b815c74072"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjc"
+  },
+  {
+    "name": "v1.0.166",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.166",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.166",
+    "commit": {
+      "sha": "e682cc9daf1040e44b9855effbf48deaad6b0f64",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/e682cc9daf1040e44b9855effbf48deaad6b0f64"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjY"
+  },
+  {
+    "name": "v1.0.165",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.165",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.165",
+    "commit": {
+      "sha": "ca65da2d9ea96f05b0b0c1aa786f767385e3cac8",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/ca65da2d9ea96f05b0b0c1aa786f767385e3cac8"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjU"
+  },
+  {
+    "name": "v1.0.164",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.164",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.164",
+    "commit": {
+      "sha": "ef0fa2007b658ca49d4a19ab4234553b9380ee80",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/ef0fa2007b658ca49d4a19ab4234553b9380ee80"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjQ"
+  },
+  {
+    "name": "v1.0.163",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.163",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.163",
+    "commit": {
+      "sha": "03f0b6dd7acc4c57c5c7b3b413eef04b282bf727",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/03f0b6dd7acc4c57c5c7b3b413eef04b282bf727"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjM"
+  },
+  {
+    "name": "v1.0.162",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.162",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.162",
+    "commit": {
+      "sha": "92fe9277859afa2d0bd2c47282bc4c248f017aa2",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/92fe9277859afa2d0bd2c47282bc4c248f017aa2"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjI"
+  },
+  {
+    "name": "v1.0.161",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.161",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.161",
+    "commit": {
+      "sha": "0dce5173ccca05aa7bd9eaabab78fe1f5f4d4360",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/0dce5173ccca05aa7bd9eaabab78fe1f5f4d4360"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjE"
+  },
+  {
+    "name": "v1.0.160",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.160",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.160",
+    "commit": {
+      "sha": "002db3abf4253a7639e745a55b8b739aca5bd534",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/002db3abf4253a7639e745a55b8b739aca5bd534"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNjA"
+  },
+  {
+    "name": "v1.0.159",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.159",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.159",
+    "commit": {
+      "sha": "88314148e605480147f5cc5e8702d8f21a8ddd94",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/88314148e605480147f5cc5e8702d8f21a8ddd94"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTk"
+  },
+  {
+    "name": "v1.0.158",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.158",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.158",
+    "commit": {
+      "sha": "37e4c1e619b33d1671e00a0cf9aecb7e2fbe68c5",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/37e4c1e619b33d1671e00a0cf9aecb7e2fbe68c5"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTg"
+  },
+  {
+    "name": "v1.0.157",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.157",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.157",
+    "commit": {
+      "sha": "9c5f94bd66156cdb21d2ed617886a0f103f4b24b",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/9c5f94bd66156cdb21d2ed617886a0f103f4b24b"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTc"
+  },
+  {
+    "name": "v1.0.156",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.156",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.156",
+    "commit": {
+      "sha": "cf05e6e02bb22cd744d02cabf1a6c9825fc1e664",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/cf05e6e02bb22cd744d02cabf1a6c9825fc1e664"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTY"
+  },
+  {
+    "name": "v1.0.155",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.155",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.155",
+    "commit": {
+      "sha": "b9b43490397cb17dfb4c636d43956137d595b354",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/b9b43490397cb17dfb4c636d43956137d595b354"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTU"
+  },
+  {
+    "name": "v1.0.154",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.154",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.154",
+    "commit": {
+      "sha": "56dde2cc835f509f77cbd800d080d6dbb2b8edc6",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/56dde2cc835f509f77cbd800d080d6dbb2b8edc6"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTQ"
+  },
+  {
+    "name": "v1.0.153",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.153",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.153",
+    "commit": {
+      "sha": "a34e67b51877987b2838f00142425158bd33a90f",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/a34e67b51877987b2838f00142425158bd33a90f"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTM"
+  },
+  {
+    "name": "v1.0.152",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.152",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.152",
+    "commit": {
+      "sha": "b84d513bd7e8c2e38e7a2e6ea1315a224e4b6429",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/b84d513bd7e8c2e38e7a2e6ea1315a224e4b6429"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTI"
+  },
+  {
+    "name": "v1.0.151",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.151",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.151",
+    "commit": {
+      "sha": "379c4ecab3b6c95165bfb75936e336221bb58f42",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/379c4ecab3b6c95165bfb75936e336221bb58f42"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTE"
+  },
+  {
+    "name": "v1.0.150",
+    "zipball_url": "https://api.github.com/repos/anomalyco/opencode/zipball/refs/tags/v1.0.150",
+    "tarball_url": "https://api.github.com/repos/anomalyco/opencode/tarball/refs/tags/v1.0.150",
+    "commit": {
+      "sha": "5ffcde9dba64760286d43dbb1c97da7566c44178",
+      "url": "https://api.github.com/repos/anomalyco/opencode/commits/5ffcde9dba64760286d43dbb1c97da7566c44178"
+    },
+    "node_id": "REF_kwDOOiiGL7JyZWZzL3RhZ3MvdjEuMC4xNTA"
+  }
+]

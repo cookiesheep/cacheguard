@@ -21,6 +21,9 @@ import { ObservationParser } from '../adapters/claude-code/parser.js';
 import { readBaseUrlHint } from '../adapters/claude-code/paths.js';
 import { CodexAdapter } from '../adapters/codex/adapter.js';
 import { CodexParser, type CodexAmbient } from '../adapters/codex/parser.js';
+import { OpenCodeAdapter } from '../adapters/opencode/adapter.js';
+import { OpenCodeParser } from '../adapters/opencode/parser.js';
+import { readOpenCodeMessages } from '../adapters/opencode/paths.js';
 import { readTailSnapshot, JsonlTailer } from '../collector/tailer.js';
 import { estimateCacheState, classifyFact } from '../cache/estimator.js';
 import { CacheGuardStore } from '../storage/db.js';
@@ -38,6 +41,7 @@ export class SessionEngine {
   readonly store: CacheGuardStore;
   private readonly claudeAdapter: ClaudeCodeAdapter;
   private readonly codexAdapter: CodexAdapter;
+  private readonly opencodeAdapter: OpenCodeAdapter;
   /**
    * undefined = default endpoint (no override, no explicit URL);
    * null = endpoint explicitly unknown (--claude-dir override hid settings);
@@ -52,11 +56,13 @@ export class SessionEngine {
     opts: {
       claudeDirOverride?: string | undefined;
       codexDirOverride?: string | undefined;
+      opencodeDirOverride?: string | undefined;
       store?: CacheGuardStore | undefined;
     } = {},
   ) {
     this.claudeAdapter = new ClaudeCodeAdapter(opts.claudeDirOverride);
     this.codexAdapter = new CodexAdapter(opts.codexDirOverride);
+    this.opencodeAdapter = new OpenCodeAdapter(opts.opencodeDirOverride ?? process.env.CACHEGUARD_OPENCODE_DIR);
     this.store = opts.store ?? new CacheGuardStore();
     this.baseUrlHint =
       readBaseUrlHint(opts.claudeDirOverride) ??
@@ -65,11 +71,12 @@ export class SessionEngine {
 
   /** Discover sessions of ALL agents, most recently active first. */
   async discover(): Promise<DiscoveredSession[]> {
-    const [claude, codex] = await Promise.all([
+    const [claude, codex, opencode] = await Promise.all([
       this.claudeAdapter.discoverSessions(),
       this.codexAdapter.discoverSessions(),
+      this.opencodeAdapter.discoverSessions(),
     ]);
-    return [...claude, ...codex].sort((a, b) => activityScore(b) - activityScore(a));
+    return [...claude, ...codex, ...opencode].sort((a, b) => activityScore(b) - activityScore(a));
   }
 
   /**
@@ -114,6 +121,18 @@ export class SessionEngine {
     onUpdate: (status: SessionStatus) => void,
     onError?: (err: Error) => void,
   ): { stop: () => void } {
+    if (session.agent === 'opencode') {
+      // DB source: poll a cheap re-snapshot instead of a file tailer.
+      const timer = setInterval(
+        () => {
+          void this.snapshot(session)
+            .then(onUpdate)
+            .catch(() => {});
+        },
+        2000,
+      );
+      return { stop: () => clearInterval(timer) };
+    }
     const parser = session.agent === 'codex' ? new CodexParser() : new ObservationParser();
     const tailer = new JsonlTailer(session.filePath, {
       startAtEof: true,
@@ -157,6 +176,18 @@ export class SessionEngine {
       throw new Error(
         `Failed reading session file ${session.filePath}: ${(err as Error).message}`,
       );
+    }
+    if (session.agent === 'opencode') {
+      // DB-backed: map the byte budget to a row limit (~1KB/row heuristic);
+      // cost/doctor pass MAX_SAFE_INTEGER → all rows (F4 determinism).
+      const rows = readOpenCodeMessages(session.sessionId, {
+        limitRows: Math.floor(snapshotBytes / 1024) || 500,
+        dirOverride: process.env.CACHEGUARD_OPENCODE_DIR,
+      });
+      const parser = new OpenCodeParser();
+      return parser
+        .parseRows(rows)
+        .map((o) => ({ ...o, sessionId: session.sessionId }));
     }
     if (session.agent === 'codex') {
       // session_meta/turn_context live at the file head; a tail-only read
