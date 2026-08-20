@@ -1,124 +1,158 @@
 # CacheGuard
 
-> **让 Coding Agent 的 Prompt Cache 看得见、算得清、值得时才保护。**
-> Read-only prompt-cache observability for coding agents — **Claude Code + Codex**.
+> **See your coding agent's prompt cache — before it expires.**
+> Read-only prompt-cache observability for Claude Code and Codex. Local-first, zero network, honest numbers.
+
+When you step away from a coding agent to read code or think, its prompt cache is quietly dying. Come back after the TTL and the entire conversation is re-prefilled from scratch — slower, and charged at full input price. You never see any of it.
+
+TraceLab's measurement of real Claude Code / Codex workloads ([arXiv 2606.30560](https://arxiv.org/abs/2606.30560)) puts numbers on this: 95.7% of prefill could be served from cache overall, but **81% of appended tokens are still redundant re-prefill**, and human turn gaps average **46.7 minutes** (median 1.4 min) — far beyond typical cache TTLs.
+
+CacheGuard makes the invisible visible, quantified, and honest.
+
+## What it looks like
+
+**`cacheguard status`** — is the cache alive right now? (real session, Codex CLI)
 
 ```
-$ cacheguard status
-
 CacheGuard — read-only cache observability
 
-Agent          Claude Code 2.1.235
-Session        ae6bfb8b-e5c4-4f76-824d-17347c5bef80
-Project        D:\code\build-your-own-claude-code
-Model          glm-5.3
+Agent          Codex 0.146.0-alpha.9.2
+Session        019fdbc0-9ee2-79b3-ac7d-d7e19c4afe1f
+Model          gpt-5.6-sol
 
-Context        132,004 tok
-Cache Read     128,576 tok
+Context        209,015 tok
+Cache Read     195,712 tok
 Cache Write         0 tok
-Cache Ratio      97.4%
+Cache Ratio      93.6%
 
-Last Call      2h27m ago
-Last Cache     2h27m ago (verified hit: 128,576 tok)
-TTL Remaining  expired (est.) [EMPIRICAL_ESTIMATE]
+Last Call      18h55m ago
+Last Cache     18h55m ago (verified hit: 195,712 tok)
+TTL Remaining  expired (est.) [STATIC_POLICY]
 
 Cache State    LIKELY_EXPIRED
-Confidence     77%
+Confidence     83%
 
-Reason: Last verified cache hit 2h27m (128,576 tokens read), 2h27m ago —
-beyond the estimated TTL (EMPIRICAL_ESTIMATE: 1943s). No new request has
-verified either way.
+Reason: Last verified cache hit 18h55m (195,712 tokens read), 18h55m ago —
+beyond the estimated TTL (STATIC_POLICY: 1800s). No new request has verified either way.
 ```
 
-## 为什么
+**`cacheguard cost`** — what did cache misses actually cost? (same session)
 
-LLM 服务商用 Prompt Cache / Prefix Cache 避免每轮重新 prefill 全部历史。但 cache 有 TTL 与逐出策略 — **你在 Agent 完成任务后阅读代码、思考的每一分钟, 都在消耗 cache 的寿命**。下次输入时大段前缀重新 prefill: 更贵、更慢, 而这一切对用户完全不可见。
+```
+CacheGuard cost — pricing snapshot 2026-08-20
+Agent          codex  gpt-5.6-sol
 
-TraceLab (arXiv 2606.30560) 对真实 Claude Code/Codex 工作负载的测量: prefix cache 总命中率 95.7%, 但**新用户消息轮只有 86.9%** (Claude 口径; Claude+Codex 合计 84.4%, Codex 78.2%); 追加 token 中 **81% 是冗余 re-prefill**, prefill amplification 达 **5.3×** (Claude 8.1×); 人类平均响应间隔 46.7 分钟 — 远超常见 5 分钟 TTL。
+Requests       593 (full session file)
+Input (unc.)   72,856,681 tok
+Cache Read     70,155,136 tok
+Prefill Spend  $48.59 [snapshot]
+Cache Saving   $315.70 vs no-cache world
 
-CacheGuard 把这个过程变成看得见的: 当前 context 多大、命中了多少、cache 大概率还活着吗、什么时候过期、依据是什么。
+Cache Bleed (verified): $3.98  — 6 MISS/PARTIAL events
+  2026/8/13 21:10:22  $0.61      suspected TTL · lower bound
+  2026/8/13 21:20:38  $0.66      suspected TTL · lower bound
+  …
+Cold Exposure  $0.94 [estimated]
+```
 
-## 诚实性原则 (这个工具的底线)
+**`cacheguard doctor`** — *why* did it miss? (real Claude Code session via GLM gateway)
 
-我们**观察不到 GPU 上的 KV cache** — 只有 telemetry。因此:
+```
+CacheGuard doctor — attribution diagnosis (metadata-only)
 
-- **`VERIFIED_HIT` / `VERIFIED_MISS`** 只在真实请求的 usage 证明时出现 (事实);
-- **`LIKELY_HOT` / `AT_RISK` / `LIKELY_EXPIRED`** 是推断, 永远带 confidence 和可读的 reason (推断);
-- 不知道就显示 `UNKNOWN`, TTL 来源不明就标注 `UNKNOWN (placeholder)`;
-- **事实与推断绝不混同**。UI 上的每个字都能回答"你怎么知道的"。
+Verified bleed 11,544,789 tok across 73 MISS/PARTIAL event(s)
 
-## 支持的 Agent
+Attribution breakdown
+  39   suspected TTL (suspected/inferred)
+  22   compaction (suspected/inferred)
+  7    suspected prefix break (suspected/inferred)
+  4    model switch (suspected/inferred)
 
-| Agent | 数据源 | TTL 策略 | 验证状态 |
+Model switches at miss boundaries
+  2026/7/8 16:23:50  glm-5.1 → glm-5.2
+  2026/8/19 17:52:07  glm-5.2 → glm-5.3
+
+Recurring residual layers
+  ×18  … ~21,646 tok sub-prefix readable while the bulk was lost (inferred)
+  ×8   … ~45,264 tok …
+  … 10 more clusters (see --json)
+
+Advice (each tied to evidence; all conclusions are inferences)
+  • [suspected-ttl] evidence: 39 miss(es) after idle gaps ≥60s …
+```
+
+## Honesty is the product
+
+Nobody can see the KV cache on the provider's GPUs — so CacheGuard never pretends to. Every number carries its epistemic level, and facts are never mixed with inferences:
+
+| Level | Meaning | Where you see it |
+|---|---|---|
+| `VERIFIED_HIT` / `VERIFIED_MISS` | Proven by real request telemetry (`cache_read_input_tokens`) | facts |
+| `LIKELY_HOT` / `AT_RISK` / `LIKELY_EXPIRED` | Inference from last fact + time + TTL policy — always with confidence and a reason naming its inputs | state panel |
+| `verified` bleed | Only from proven MISS/PARTIAL events: "this request cost X more than a full hit would" | cost ledger |
+| `estimated` exposure | "if the cache died right now, the next request would cost X" — with its assumption printed | cost ledger |
+| `inferred` write surcharge | Displayed, never summed into verified totals | cost ledger |
+| `UNKNOWN` | No evidence → no number. Gateways without list prices get token-only ledgers; countdowns are marked as placeholders | everywhere |
+
+TTL is never hardcoded: static policy (Anthropic 5m/1h, OpenAI GPT-5.6 30m) applies only where documented; gateways (GLM, OpenRouter, …) fall back to *empirical* estimates from your own session history, or honestly say `UNKNOWN`.
+
+## Supported agents
+
+| Agent | Source | TTL policy | Verified against |
 |---|---|---|---|
-| **Claude Code** | `~/.claude/projects/**.jsonl` (cache_read / cache_creation / ephemeral_5m / 1h) | Anthropic 官方 5m/1h; 网关 (GLM/OpenRouter/…) 自动降级为本机 EMPIRICAL 估计 | 真实数据 + 受控 idle 实验 (TTL ∈ (20,40]min, read 刷新 VERIFIED) |
-| **Codex CLI** | `~/.codex/sessions/**/rollout-*.jsonl` (token_count: cached_input_tokens / cache_write) | GPT-5.6+ = 官方 30min; pre-5.6 = 诚实的 UNKNOWN (5-10min vs 24h 本地不可区分) + EMPIRICAL | 真实数据 (gpt-5.4 / gpt-5.6) |
+| Claude Code | `~/.claude/projects/**/*.jsonl` | Anthropic 5m/1h docs; gateways → empirical/UNKNOWN | real sessions incl. a controlled idle experiment (GLM gateway: TTL ∈ (20, 40] min, read-refresh verified) |
+| Codex CLI | `~/.codex/sessions/**/rollout-*.jsonl` | GPT-5.6+ → documented 30m; pre-5.6 → UNKNOWN (5–10min vs 24h retention cannot be distinguished locally) + empirical | real sessions (gpt-5.4, gpt-5.6) |
 
-## 安装与使用
+## Install & quickstart
 
-要求: Node.js ≥ 22.5, 已使用过 Claude Code (`~/.claude/projects` 有数据) 或 Codex (`~/.codex/sessions`)。
+Requires Node.js ≥ 22.5 and existing Claude Code or Codex local data.
 
 ```bash
-npm install -g .        # 从源码安装 (cacheguard 命令)
+npm install -g cacheguard        # (pending publish — until then: git clone && npm install -g .)
 
-cacheguard status       # 一次性的 cache 状态面板 (默认最近活跃 session)
-cacheguard watch        # 实时刷新 (TTL 倒计时随时间推进)
-cacheguard sessions     # 列出发现的 session
-cacheguard events       # cache 事件历史 (VERIFIED_MISS / PARTIAL_MISS / TTL_RISK …)
-cacheguard backfill <id> # 全量解析一个 session 入库
-cacheguard status --json # 机器可读输出 (claude-code 与 codex 输出同构)
+cacheguard status                # cache state of your most recent session
+cacheguard cost                  # the economic ledger (verified bleed / savings / exposure)
+cacheguard doctor                # why the misses happened, with evidence
+cacheguard watch                 # live TTL countdown
+cacheguard sessions              # list sessions across both agents
 ```
 
-两个 agent 的 session 自动混合发现 (`sessions` 带 AGENT 列); `--claude-dir` / `--codex-dir` 可覆盖数据目录。
+`--json` on every command. `--claude-dir` / `--codex-dir` override data locations.
 
-数据存于本地 `~/.cacheguard/cacheguard.db` (SQLite) — Claude Code 的 JSONL 约 30 天会被清理, CacheGuard 保留自己的历史。
+## Privacy (a promise, not a setting)
 
-## 工作原理
+- **Zero network.** There is no outbound HTTP anywhere in the code. Telemetry never leaves your machine.
+- **No conversation content.** CacheGuard parses token counters, timestamps, and model names — the parsers physically do not read message bodies. Nothing you typed or generated is stored.
+- **Read-only on your agents.** It never writes to `~/.claude` or `~/.codex`; it keeps its own small SQLite at `~/.cacheguard`.
+- Local data is pruned by the agents after ~30 days; CacheGuard's ledger preserves your cache history independently.
 
-```
-~/.claude/sessions/<pid>.json        ← 活跃 session 注册表 (识别当前 session)
-~/.claude/projects/**/<sessionId>.jsonl ← assistant 记录的 message.usage
-                                         (cache_read / cache_creation / ephemeral_5m / 1h …)
-```
+## Known limitations (the honest list)
 
-- **增量 tail** (offset checkpoint + 半行缓冲 + 截断检测), 46MB session 只读尾部 4MB 即可出状态, 正常运行时对 Claude Code **无可感知影响**;
-- **message.id 去重** — 一个 API 响应在 JSONL 里是 1~17 条记录 (实测放大 ~3x), 这是准确统计的前提;
-- **TTL 不写死**: `STATIC_POLICY` (官方文档) → `RUNTIME_TELEMETRY` (ephemeral_1h 证据) → `EMPIRICAL_ESTIMATE` (本机观测的存活/失效间隙, 含防污染规则) → `UNKNOWN`。经网关 (BigModel/OpenRouter/…) 运行时, 静态策略自动失效, 以本机证据为准。
-
-架构详见 [docs/architecture.md](docs/architecture.md), Claude Code 数据格式审计见 [docs/claude-code-schema.md](docs/claude-code-schema.md)。
-
-## Privacy
-
-**CacheGuard does not upload your code or conversation content.**
-
-- 零网络请求 — 代码中不存在任何出站 HTTP;
-- 只读取 token 计数、时间戳、模型名、session 元数据; 不解析、不存储任何 prompt/代码/对话内容;
-- `~/.claude/history.jsonl` (含输入正文) 不读取; `settings.json` 只提取 `ANTHROPIC_BASE_URL` 一个字段用于判定 provider。
-
-## 只读承诺 (Phase 1)
-
-Phase 1 **不做**也不会做: keepalive ping、模拟输入、修改 session、隐藏消息、API proxy。仅当 Observe 与 Cost Engine 被验证可靠后, Phase 3 的 Auto Protect 才会以显式 opt-in 的方式引入。
+- **Codex write-side telemetry is unreliable** — `cache_write_input_tokens` defaults to 0 on pre-GPT-5.6 models and stays 0 on some providers even when writes happen. Codex bleed is therefore always a *lower bound*, with the inferred surcharge shown separately.
+- **Pricing is a hand-vendored snapshot** (`src/cost/pricing-snapshot.json`, dated). Models without a verified list price get token-only ledgers — CacheGuard never invents dollar figures. GLM/gateway sessions run in quota mode (tokens, not USD).
+- **Session JSONL has no official schema.** Both parsers are defensive (unknown records skipped, version logged per row) — but agent updates can change formats.
+- **Attribution is heuristic.** Doctor buckets are `suspected-*` by design; recurring-layer findings are `inferred`. Nothing claims causation without telemetry proof.
+- **TTL behaves like a distribution on gateways** (load-dependent eviction observed on GLM). Countdowns are estimates, labeled as such.
 
 ## Roadmap
 
-| Phase | 能力 | 状态 |
-|---|---|---|
-| 1 | Cache Monitor (看得见) | ✅ 本仓库 |
-| 1.5 | 受控 idle-time 实验 (验证 TTL 行为) | 进行中 |
-| 2 | Cost Engine (算得清) — Verified vs Estimated Saving 分账 | 计划 |
-| 3 | Auto Protect (自动做) — 期望收益决策式 keepalive | 计划 |
-| — | 多 Agent: Codex / Cursor / OpenCode adapters (接口已就位) | 计划 |
+- ✅ **Observe** — status / watch, six-state model, both agents
+- ✅ **Calculate** — dual ledger (verified bleed / estimated exposure), pricing snapshot, quota mode
+- ✅ **Diagnose** — doctor: attribution signals, recurring layers, evidence-tied advice
+- ⬜ Attribution deepening & per-day ledgers
+- ⬜ More agents (Cursor, OpenCode — adapter interface is ready)
+- ⏸ **Auto-protect / keepalive — deliberately deferred.** We will only build it if the economics prove worth it (and it will be opt-in). CacheGuard stays read-only until then.
 
 ## Development
 
 ```bash
-npm install
-npm test          # 36 tests (parser robustness / state machine / policy / tailer / storage)
-npm run build
-npm run schema-audit   # 重新审计本机 Claude Code JSONL schema
+npm install && npm run build && npm test    # 87 tests
+npm run schema-audit                        # re-audit your local agent schemas
 ```
 
-工程日志: [docs/development-plan.md](docs/development-plan.md) — 每阶段记录已完成 / 当前事实 / 发现的问题 / 未验证假设 / 下一步。
+Docs: [architecture](docs/architecture.md) · [Claude Code schema](docs/claude-code-schema.md) · [Codex schema](docs/codex-schema.md) · [cost engine](docs/cost-engine.md) · [doctor](docs/doctor.md) · [development plan](docs/development-plan.md)
+
+中文文档: [README.zh-CN.md](README.zh-CN.md)
 
 ## License
 

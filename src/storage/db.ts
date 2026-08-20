@@ -144,7 +144,17 @@ export class CacheGuardStore {
     );
     const tx = this.db.transaction((rows: CacheObservation[]) => {
       const added: CacheObservation[] = [];
+      const ensureSession = this.db.prepare(
+        `INSERT OR IGNORE INTO sessions (session_id, agent, updated_at) VALUES (?, ?, ?)`,
+      );
+      const seenSessions = new Set<string>();
       for (const o of rows) {
+        // records whose sessionId differs from the discovered filename still
+        // need a parent row (FK) — cheap guard, smoke-tested regression
+        if (!seenSessions.has(o.sessionId)) {
+          ensureSession.run(o.sessionId, o.agent, Date.now());
+          seenSessions.add(o.sessionId);
+        }
         const res = stmt.run({
           sessionId: o.sessionId,
           requestId: o.requestId,

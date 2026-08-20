@@ -56,7 +56,7 @@ export class SessionEngine {
     } = {},
   ) {
     this.claudeAdapter = new ClaudeCodeAdapter(opts.claudeDirOverride);
-    this.codexAdapter = new CodexAdapter(opts.claudeDirOverride ? undefined : opts.codexDirOverride);
+    this.codexAdapter = new CodexAdapter(opts.codexDirOverride);
     this.store = opts.store ?? new CacheGuardStore();
     this.baseUrlHint =
       readBaseUrlHint(opts.claudeDirOverride) ??

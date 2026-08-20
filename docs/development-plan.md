@@ -18,6 +18,7 @@
 | Round 3 — CodexAdapter (跨 Agent 第一步) | ✅ 完成 (2026-08-20) | 真实数据验证 (本机 codex-cli 0.147, gpt-5.4/5.6); 见 §5.6 |
 | Phase 2 — Cost Engine v1 | ✅ 完成 (2026-08-20) | 双账本 (verified bleed / estimated exposure) + vendored 费率快照 + 口径感知公式; 见 §5.7 与 docs/cost-engine.md |
 | Round 5 — Cache Doctor + F3 + OTel spike | ✅ 完成 (2026-08-20) | 归因深化 (model-switch/重复残层/时间聚类) + 快照补全 6 模型 + OTel 结论=暂缓; 见 §5.8 |
+| Round 6 — 发布准备 (未发布) | ✅ 完成 (2026-08-20) | F4 账本确定性 + F5 法务 + 双语 README + 安装冒烟; 见 §5.9 |
 | Phase 2+ — Cost Engine 深化 | ⬜ | LiteLLM 快照导入、per-day 汇总 |
 | Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
@@ -186,6 +187,15 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 - **Doctor 真实发现** (此前不可见): ① GLM 会话 (32MB 深读) 37 个 bleed 事件 (Round 4 的 4MB 尾读只见 6 个 — 读取深度差异, 非矛盾); ② 两处 model-switch miss (glm-5.1→5.2, glm-5.2→5.3 — Round 4 曾把 8/19 17:52 那次归为 suspected-TTL, doctor 依证据升级归因); ③ **6 组重复残层**, 最大 ~420k/~664k token (GLM 分层缓存假说的强证据, 也见于 codex 侧 ~6.9k/~12k 层); ④ codex miss 集中在 8/13 晚间 21 点档。
 - **OTel spike → 暂缓** (docs/otel-channel.md): 本机配置 (GLM 网关 + headless) 下 telemetry 管线零发射 (console/1s 间隔/本地 otlp collector 三种方式实测); 意外收获: `-p` stdout 结果行自带 duration/TTFT/costUSD (Cost Engine official 来源候选)。重启条件已列。
 - **环境风险新发现**: claude-code 自动更新 (2.1.235→2.1.236) 后本机 segfault (连 --version 都崩), spike 期间 pinned `.old` 二进制绕过 — 印证 parser 版本容错 + version 入库策略的必要性; 实验脚本应支持二进制路径参数。
+
+### 5.9 Round 6: 发布准备结论 (2026-08-20, 未发布)
+
+- **F4 选方案 a** (cost/doctor 永远全量回读, status/watch 保留 4MB 快路径): 理由 — 账本确定性是产品灵魂, "同一命令两次跑出不同数字" 对财务报告致命; cost/doctor 是一次性命令, 全量解析 1-3s 可接受; 方案 b 会永久保留数字歧义。**3 个新确定性测试** (双全新 DB 全读一致 / 浅读复现 bug / 浅读后全读收敛), 真实 session 双跑一致 ($3.98/6 事件/593 请求)。渲染层加 "full session file" 覆盖标注。
+- **冒烟抓到两个真产品 bug 并修复**: ① engine 构造器在 --claude-dir 设置时忽略 --codex-dir (R3 引入); ② 记录 sessionId ≠ 文件名时 observations 外键崩溃 (加 INSERT OR IGNORE 守卫 — 真实数据两 id 一致所以从未暴露)。
+- **F5**: LICENSE (Apache-2.0 全文) + package.json (license/engines/bin/files 白名单; **repository 留空** — 无远程, 发布前需填); README Privacy 强化为四点承诺 (零网络/不读正文/对 agent 只读/账本独立留存)。
+- **双语 README**: 英文主文档 (三张真实脱敏输出: codex status/cost + GLM doctor; 诚实性分级表作为卖点; 局限清单 5 条; TraceLab 数字带引用) + README.zh-CN.md。
+- **scripts/smoke-install.mjs 可重复**: npm pack → 临时目录安装 (无全局副作用) → fixture HOME → 15 项检查全过 (tarball 白名单/bin/shebang/双 agent 发现/全命令面/--json/--help 无陈旧文案)。
+- **发布前剩余**: 唯一等待项 = 用户指令; 技术侧 checklist: 填 repository 字段 → npm publish (名字 `cacheguard` 2026-08-20 可用) → 建远程仓库。better-sqlite3 安装脚本需用户 npm approve-scripts (冒烟日志提示)。
 
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 

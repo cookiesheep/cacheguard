@@ -239,7 +239,10 @@ program
         return;
       }
       const session = await pickSession(engine, sessionId);
-      const status = await engine.snapshot(session);
+      // F4: ledgers are ALWAYS computed from the FULL session file — a
+      // financial report must not depend on how much happens to be cached
+      // in the local DB from earlier shallow reads.
+      const status = await engine.snapshot(session, Number.MAX_SAFE_INTEGER);
       const ledger = computeCostLedger({
         agent: session.agent,
         observations: status.allObservations,
@@ -267,7 +270,8 @@ program
     });
     try {
       const session = await pickSession(engine, sessionId);
-      const status = await engine.snapshot(session, 32 * 1024 * 1024);
+      // F4: same determinism rule as cost — always the full session file.
+      const status = await engine.snapshot(session, Number.MAX_SAFE_INTEGER);
       const report = analyzeDoctor({
         sessionId: session.sessionId,
         agent: session.agent,
@@ -338,7 +342,7 @@ export function renderLedger(ledger: CostLedger, sessionId: string, color: boole
   L.push(`Session        ${sessionId}`);
   L.push(`Agent          ${ledger.agent}  ${dim(ledger.totals.models.join(', ').slice(0, 50))}`);
   L.push('');
-  L.push(`Requests       ${t.requests}`);
+  L.push(`Requests       ${t.requests} ${dim('(full session file)')}`);
   L.push(`Input (unc.)   ${fmtTokens(t.inputTokens)} tok`);
   L.push(`Cache Read     ${fmtTokens(t.cacheReadTokens)} tok`);
   L.push(`Cache Write    ${fmtTokens(t.cacheWriteTokens)} tok`);
@@ -412,8 +416,11 @@ function renderDoctor(r: DoctorReport, color: boolean): string {
   if (r.recurringLayers.length > 0) {
     L.push('');
     L.push(bold('Recurring residual layers'));
-    for (const layer of r.recurringLayers) {
+    for (const layer of r.recurringLayers.slice(0, 5)) {
       L.push(`  ×${layer.occurrences}  ${dim(layer.note)}`);
+    }
+    if (r.recurringLayers.length > 5) {
+      L.push(dim(`  … ${r.recurringLayers.length - 5} more clusters (see --json)`));
     }
   }
   if (r.hourClusters.length > 0) {

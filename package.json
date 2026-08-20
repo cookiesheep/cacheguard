@@ -32,7 +32,8 @@
     "telemetry",
     "llm",
     "observability",
-    "token-usage"
+    "token-usage",
+    "cache-miss"
   ],
   "dependencies": {
     "better-sqlite3": "^12.2.0",
