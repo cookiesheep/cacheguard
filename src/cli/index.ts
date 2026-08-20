@@ -19,7 +19,7 @@ const program = new Command();
 
 program
   .name('cacheguard')
-  .description('Read-only prompt-cache observability for coding agents (Phase 1: Claude Code)')
+  .description('Read-only prompt-cache observability for coding agents (Claude Code + Codex)')
   .version('0.1.0')
   .option('--no-color', 'disable ANSI colors')
   .option('--claude-dir <path>', 'override ~/.claude location')
