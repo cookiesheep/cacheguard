@@ -1,6 +1,8 @@
 # CacheGuard Development Plan
 
 > 工程日志 · 按阶段更新 · 原则: **事实优先于项目设想**
+>
+> **工程门禁 (2026-08-20 起, 强制)**: 每次 commit 前必须 `npm run build && npm test` 双绿。测试绿 ≠ 构建绿 — Round 3 曾出现 build 失败但测试通过被提交的情况 (CLI 描述笔误), 此规则即其教训。
 > Last updated: 2026-08-19 (Phase 1.5 进行中)
 > 独立事实复核与竞争审计: [research-audit-2026-08-19.md](research-audit-2026-08-19.md) — 战略校准结论 (§2.2): "看得见"为主产品、主战场是非官方端点+多 agent+长期账本; "自动做"收窄为 economics-aware (值得时才保护)。
 
