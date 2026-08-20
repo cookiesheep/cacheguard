@@ -64,12 +64,13 @@ run('npm', ['install', tarPath], { cwd: proj });
 const bin = path.join(proj, 'node_modules', '.bin', process.platform === 'win32' ? 'cacheguard.cmd' : 'cacheguard');
 check('bin installed', fs.existsSync(bin));
 
-const entry = fs.readFileSync(path.join(proj, 'node_modules', 'cacheguard', 'dist', 'cli', 'index.js'), 'utf8');
+const PKG_DIR = path.join(proj, 'node_modules', '@cookiesheep', 'cacheguard');
+const entry = fs.readFileSync(path.join(PKG_DIR, 'dist', 'cli', 'index.js'), 'utf8');
 check('bin entry has node shebang', entry.startsWith('#!/usr/bin/env node'));
 
 function cg(args, expectOk = true) {
   try {
-    return run('node', [path.join(proj, 'node_modules', 'cacheguard', 'dist', 'cli', 'index.js'), ...args], {
+    return run('node', [path.join(PKG_DIR, 'dist', 'cli', 'index.js'), ...args], {
       env: { ...process.env, CACHEGUARD_DB: path.join(SCRATCH, 'smoke.db') },
     });
   } catch (e) {

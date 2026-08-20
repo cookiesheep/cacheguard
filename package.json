@@ -1,5 +1,5 @@
 {
-  "name": "cacheguard",
+  "name": "@cookiesheep/cacheguard",
   "version": "0.1.0",
   "description": "Read-only prompt-cache observability for coding agents (Claude Code + Codex). See the cache, before it expires.",
   "type": "module",
