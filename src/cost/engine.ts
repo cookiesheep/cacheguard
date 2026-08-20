@@ -17,6 +17,7 @@ import { classifyFact } from '../cache/estimator.js';
 import { resolvePricing, type PricingStatus } from './pricing.js';
 
 export type Attribution =
+  | 'model-switch'
   | 'suspected-ttl'
   | 'compaction'
   | 'suspected-prefix-break'
@@ -247,6 +248,9 @@ export function computeCostLedger(input: {
 
 function attribute(obs: CacheObservation, prev?: CacheObservation): Attribution {
   if (!prev || !prev.contextTokens || !obs.contextTokens) return 'unknown';
+  // Concrete signals outrank generic guesses: a model switch across the miss
+  // boundary provably drops the cache (official docs) — attribute it first.
+  if (prev.model && obs.model && prev.model !== obs.model) return 'model-switch';
   const gap = obs.timestamp - prev.timestamp;
   if (obs.contextTokens < prev.contextTokens * ATTR_COMPACTION_DROP) return 'compaction';
   if (gap >= ATTR_GAP_TTL_MS) return 'suspected-ttl';

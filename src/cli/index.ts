@@ -6,6 +6,7 @@
 import { Command } from 'commander';
 import { SessionEngine } from '../sessions/engine.js';
 import { computeCostLedger, type CostLedger } from '../cost/engine.js';
+import { analyzeDoctor, type DoctorReport } from '../doctor/analyze.js';
 import {
   renderStatus,
   fmtTokens,
@@ -254,6 +255,35 @@ program
   });
 
 program
+  .command('doctor')
+  .description('attribution diagnosis: why cache misses happened, with evidence-tied advice')
+  .argument('[sessionId]', 'session id (prefix match); defaults to most recent')
+  .option('--json', 'machine-readable output')
+  .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
+    try {
+      const session = await pickSession(engine, sessionId);
+      const status = await engine.snapshot(session, 32 * 1024 * 1024);
+      const report = analyzeDoctor({
+        sessionId: session.sessionId,
+        agent: session.agent,
+        observations: status.allObservations,
+      });
+      if (cmdOpts.json) {
+        console.log(JSON.stringify(report, null, 2));
+      } else {
+        console.log(renderDoctor(report, colorEnabled(program.opts())));
+      }
+    } finally {
+      engine.store.close();
+    }
+  });
+
+program
   .command('backfill')
   .description('parse a full session file into the local DB (bounded memory, line-by-line)')
   .argument('<sessionId|path>', 'session id (prefix match) or JSONL path')
@@ -344,6 +374,69 @@ export function renderLedger(ledger: CostLedger, sessionId: string, color: boole
     : `${fmtTokens(ledger.estimated.coldExposureTokens)} tok ${dim('[estimated]')}`;
   L.push(`Cold Exposure  ${exp}`);
   L.push(dim(`assumption: ${ledger.estimated.assumption}`));
+  return L.join('\n');
+}
+
+const DOCTOR_ATTR_LABEL: Record<string, string> = {
+  ...ATTR_LABEL,
+  'model-switch': 'model switch',
+};
+
+function renderDoctor(r: DoctorReport, color: boolean): string {
+  const dim = (s2: string) => (color ? `[2m${s2}[0m` : s2);
+  const bold = (s2: string) => (color ? `[1m${s2}[0m` : s2);
+  const L: string[] = [];
+  const priced = r.ledger.pricingStatus.kind === 'priced';
+  L.push(bold('CacheGuard doctor') + dim(' — attribution diagnosis (metadata-only)'));
+  L.push(`Session        ${r.sessionId}`);
+  L.push(`Agent          ${r.agent}`);
+  L.push('');
+  const bleedTotal = priced
+    ? '$' + (r.ledger.verified.bleedUsd ?? 0).toFixed(4)
+    : fmtTokens(r.ledger.verified.lostContextTokens) + ' tok';
+  L.push(`Verified bleed ${bleedTotal} across ${r.ledger.verified.entries.length} MISS/PARTIAL event(s)`);
+  if (Object.keys(r.attributionCounts).length > 0) {
+    L.push('');
+    L.push(bold('Attribution breakdown'));
+    for (const [k, v] of Object.entries(r.attributionCounts).sort((a, b) => b[1] - a[1])) {
+      L.push(`  ${String(v).padEnd(4)} ${DOCTOR_ATTR_LABEL[k] ?? k} ${dim('(suspected/inferred)')}`);
+    }
+  }
+  if (r.modelSwitches.length > 0) {
+    L.push('');
+    L.push(bold('Model switches at miss boundaries'));
+    for (const m of r.modelSwitches.slice(0, 6)) {
+      L.push(`  ${new Date(m.at).toLocaleString()}  ${m.from} → ${m.to}`);
+    }
+  }
+  if (r.recurringLayers.length > 0) {
+    L.push('');
+    L.push(bold('Recurring residual layers'));
+    for (const layer of r.recurringLayers) {
+      L.push(`  ×${layer.occurrences}  ${dim(layer.note)}`);
+    }
+  }
+  if (r.hourClusters.length > 0) {
+    L.push('');
+    L.push(bold('When do misses cluster? (local time)'));
+    for (const h of r.hourClusters.slice(0, 5)) {
+      L.push(`  ${h.hour}  ${h.events} event(s), ${fmtTokens(h.lostTokens)} tok lost`);
+    }
+  }
+  if (r.advice.length > 0) {
+    L.push('');
+    L.push(bold('Advice (each tied to evidence; all conclusions are inferences)'));
+    for (const a of r.advice) {
+      L.push(`  • [${a.signal}]`);
+      L.push(dim(`    evidence: ${a.evidence}`));
+      L.push(`    ${a.text}`);
+    }
+  } else if (r.ledger.verified.entries.length === 0) {
+    L.push('');
+    L.push(dim('No verified MISS/PARTIAL events in this session — nothing to diagnose.'));
+  }
+  L.push('');
+  L.push(dim(`privacy: ${r.privacyNote}`));
   return L.join('\n');
 }
 

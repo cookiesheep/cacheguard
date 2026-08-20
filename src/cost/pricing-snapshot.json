@@ -1,10 +1,12 @@
 {
   "snapshotDate": "2026-08-20",
   "currency": "USD",
-  "note": "Vendored by hand from officially verified tables — see docs/research-audit-2026-08-19.md §1.2/§1.3 and docs/cost-engine.md. Never fetched at runtime. Numbers NOT verified in the audit are deliberately absent (resolvePricing falls through to PRICING_UNKNOWN).",
+  "note": "Vendored by hand from officially verified tables - see docs/research-audit-2026-08-19.md SS1.2/1.3 and docs/cost-engine.md. Never fetched at runtime. Models absent here were not price-verified in the audit (resolvePricing falls through to PRICING_UNKNOWN); earlier revisions omitted some verified entries - corrected 2026-08-20 (F3).",
   "models": [
     {
-      "match": ["claude-opus-5"],
+      "match": [
+        "claude-opus-5"
+      ],
       "inputPerMTok": 5.0,
       "outputPerMTok": null,
       "cacheReadPerMTok": 0.5,
@@ -13,25 +15,36 @@
       "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
     },
     {
-      "match": ["claude-sonnet-4-5", "claude-sonnet-4.5"],
+      "match": [
+        "claude-sonnet-4-5",
+        "claude-sonnet-4.5"
+      ],
       "inputPerMTok": 3.0,
-      "outputPerMTok": 15.0,
+      "outputPerMTok": null,
       "cacheReadPerMTok": 0.3,
       "cacheWrite5mPerMTok": 3.75,
       "cacheWrite1hPerMTok": 6.0,
       "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
     },
     {
-      "match": ["claude-haiku-4-5", "claude-haiku-4.5"],
+      "match": [
+        "claude-haiku-4-5",
+        "claude-haiku-4.5"
+      ],
       "inputPerMTok": 1.0,
-      "outputPerMTok": 5.0,
+      "outputPerMTok": null,
       "cacheReadPerMTok": 0.1,
       "cacheWrite5mPerMTok": 1.25,
       "cacheWrite1hPerMTok": 2.0,
       "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
     },
     {
-      "match": ["gpt-5.6", "gpt-5.6-sol", "gpt-5.6-luna", "gpt-5.6-codex"],
+      "match": [
+        "gpt-5.6",
+        "gpt-5.6-sol",
+        "gpt-5.6-luna",
+        "gpt-5.6-codex"
+      ],
       "inputPerMTok": 5.0,
       "outputPerMTok": null,
       "cacheReadPerMTok": 0.5,
@@ -41,18 +54,91 @@
       "sourceUrl": "https://developers.openai.com/api/docs/guides/prompt-caching"
     },
     {
-      "match": ["gpt-5.3-codex"],
+      "match": [
+        "gpt-5.3-codex"
+      ],
       "inputPerMTok": 1.75,
       "outputPerMTok": null,
       "cacheReadPerMTok": 0.175,
       "cacheWrite5mPerMTok": null,
       "cacheWrite1hPerMTok": null,
       "sourceUrl": "https://developers.openai.com/api/docs/guides/prompt-caching"
+    },
+    {
+      "match": [
+        "claude-fable-5"
+      ],
+      "inputPerMTok": 5.0,
+      "outputPerMTok": null,
+      "cacheReadPerMTok": 0.5,
+      "cacheWrite5mPerMTok": 6.25,
+      "cacheWrite1hPerMTok": 10.0,
+      "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "match": [
+        "claude-mythos-5"
+      ],
+      "inputPerMTok": 2.5,
+      "outputPerMTok": null,
+      "cacheReadPerMTok": 0.25,
+      "cacheWrite5mPerMTok": 3.125,
+      "cacheWrite1hPerMTok": 5.0,
+      "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "match": [
+        "claude-sonnet-5"
+      ],
+      "inputPerMTok": 3.0,
+      "outputPerMTok": null,
+      "cacheReadPerMTok": 0.3,
+      "cacheWrite5mPerMTok": 3.75,
+      "cacheWrite1hPerMTok": 6.0,
+      "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "match": [
+        "claude-opus-4-8",
+        "claude-opus-4.8"
+      ],
+      "inputPerMTok": 5.0,
+      "outputPerMTok": null,
+      "cacheReadPerMTok": 0.5,
+      "cacheWrite5mPerMTok": 6.25,
+      "cacheWrite1hPerMTok": 10.0,
+      "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "match": [
+        "claude-sonnet-4-6",
+        "claude-sonnet-4.6"
+      ],
+      "inputPerMTok": 3.0,
+      "outputPerMTok": null,
+      "cacheReadPerMTok": 0.3,
+      "cacheWrite5mPerMTok": 3.75,
+      "cacheWrite1hPerMTok": 6.0,
+      "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "match": [
+        "claude-opus-4-5",
+        "claude-opus-4.5"
+      ],
+      "inputPerMTok": 15.0,
+      "outputPerMTok": null,
+      "cacheReadPerMTok": 1.5,
+      "cacheWrite5mPerMTok": 18.75,
+      "cacheWrite1hPerMTok": 30.0,
+      "sourceUrl": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
     }
   ],
   "quotaModes": [
     {
-      "match": ["glm-"],
+      "match": [
+        "glm-"
+      ],
       "mode": "quota-full-price",
       "note": "GLM Coding Plan: cached tokens count fully against quota, no discount, no USD list price.",
       "sourceUrl": "https://docs.research-audit-2026-08-19.md#1.5"

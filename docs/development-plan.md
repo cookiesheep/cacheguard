@@ -17,7 +17,8 @@
 | Phase 1.5 — Controlled idle-time experiment | ✅ **完成 (2026-08-19)** | 核心结论: GLM 网关 TTL ∈ (20.1, 40.2]min; **read 刷新 TTL 成立** (2/2); 详见 [experiments/cache-ttl-validation.md](../experiments/cache-ttl-validation.md) 与 §5.5 |
 | Round 3 — CodexAdapter (跨 Agent 第一步) | ✅ 完成 (2026-08-20) | 真实数据验证 (本机 codex-cli 0.147, gpt-5.4/5.6); 见 §5.6 |
 | Phase 2 — Cost Engine v1 | ✅ 完成 (2026-08-20) | 双账本 (verified bleed / estimated exposure) + vendored 费率快照 + 口径感知公式; 见 §5.7 与 docs/cost-engine.md |
-| Phase 2+ — Cost Engine 深化 | ⬜ | LiteLLM 快照导入、per-day 汇总、深度归因 (Round 5) |
+| Round 5 — Cache Doctor + F3 + OTel spike | ✅ 完成 (2026-08-20) | 归因深化 (model-switch/重复残层/时间聚类) + 快照补全 6 模型 + OTel 结论=暂缓; 见 §5.8 |
+| Phase 2+ — Cost Engine 深化 | ⬜ | LiteLLM 快照导入、per-day 汇总 |
 | Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
 代码结构:
@@ -178,6 +179,14 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 - **顺手修 bug**: listSessions 硬编码 agent 导致 cost --all 全显示 claude-code (真实运行抓到); storage 迁移语句曾被插到建表前 (测试抓到)。
 - **局限** (docs/cost-engine.md §4): 输出价仅部分条目有核验值; Codex custom provider 写入侧恒为下界; 裸别名/未收录模型 PRICING_UNKNOWN。
 
+### 5.8 Round 5 结论 (2026-08-20)
+
+- **F3 快照补全**: 6 个审计已核验模型入快照 (fable-5/mythos-5/sonnet-5/opus-4-8/sonnet-4-6/opus-4-5, 后者 15/1.5/18.75/30 价线); note 修正为"当时漏收"; sonnet-4-5/haiku-4-5 的 output 价 (第三方来源) 一并清 null; opus-4-1 等审计没有的依旧不收。+7 黄金测试。
+- **Cache Doctor** (`cacheguard doctor`, docs/doctor.md): 归因升级 — model-switch 优先级最高 (官方确认切模型必丢缓存); 重复残层检测 (±15% 聚类); 小时聚类; 每条建议带 evidence 字段, 文案禁确定性断言 (测试断言)。**隐私红线落文档**: metadata-only, 不解析/不存储/不指纹化对话内容; prefix diff 属未来 opt-in。
+- **Doctor 真实发现** (此前不可见): ① GLM 会话 (32MB 深读) 37 个 bleed 事件 (Round 4 的 4MB 尾读只见 6 个 — 读取深度差异, 非矛盾); ② 两处 model-switch miss (glm-5.1→5.2, glm-5.2→5.3 — Round 4 曾把 8/19 17:52 那次归为 suspected-TTL, doctor 依证据升级归因); ③ **6 组重复残层**, 最大 ~420k/~664k token (GLM 分层缓存假说的强证据, 也见于 codex 侧 ~6.9k/~12k 层); ④ codex miss 集中在 8/13 晚间 21 点档。
+- **OTel spike → 暂缓** (docs/otel-channel.md): 本机配置 (GLM 网关 + headless) 下 telemetry 管线零发射 (console/1s 间隔/本地 otlp collector 三种方式实测); 意外收获: `-p` stdout 结果行自带 duration/TTFT/costUSD (Cost Engine official 来源候选)。重启条件已列。
+- **环境风险新发现**: claude-code 自动更新 (2.1.235→2.1.236) 后本机 segfault (连 --version 都崩), spike 期间 pinned `.old` 二进制绕过 — 印证 parser 版本容错 + version 入库策略的必要性; 实验脚本应支持二进制路径参数。
+
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 
 官方: [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) · [Messages API](https://docs.anthropic.com/en/api/messages) · [Claude Code prompt caching](https://code.claude.com/docs/en/prompt-caching) · [Monitoring/OTEL](https://code.claude.com/docs/en/monitoring-usage) · [Statusline](https://code.claude.com/docs/en/statusline)
@@ -199,6 +208,6 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 2. ✅ watch soak 首份数据 (180min 空闲 session); ⬜ 日间高频写入 soak (audit §2.3.2: 挂真实工作日)
 3. ✅ git 初始化 + 首次提交; ⬜ 远程仓库 (发布前确认 npm `cacheguard` 包名, audit 注: `cache-guard` 已被 caching.ai 占用)
 4. ✅ Phase 2 Cost Engine v1 (§5.7); ⬜ 深化: LiteLLM 快照导入、per-day 汇总、GLM 配额账本量化
-5. ⬜ OTEL 通道 spike (duration_ms 维度; audit §2.4.3)
+5. ✅ OTel spike 完成 → **暂缓** (§5.8/docs/otel-channel.md)
 6. ⬜ audit §2.3.3: 目标客群需求验证 (GLM/中转站社区投放 status 截图)
 7. ⬜ 发布准备 (发布动作需用户指令): npm publish 前再查包名、README 双 agent 示例、GitHub 仓库与 CI

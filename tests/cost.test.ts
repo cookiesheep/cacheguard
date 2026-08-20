@@ -134,8 +134,8 @@ test('PRICING_UNKNOWN model → no USD, token ledger only', () => {
   const ledger = computeCostLedger({
     agent: 'claude-code',
     observations: [
-      obs({ timestamp: T0 - 120_000, model: 'claude-sonnet-5' }), // deliberately not in snapshot
-      obs({ timestamp: T0, model: 'claude-sonnet-5', cacheReadTokens: 0, inputTokens: 50_000, contextTokens: 50_000 }),
+      obs({ timestamp: T0 - 120_000, model: 'claude-opus-4-1' }), // deliberately not in snapshot (not audit-verified)
+      obs({ timestamp: T0, model: 'claude-opus-4-1', cacheReadTokens: 0, inputTokens: 50_000, contextTokens: 50_000 }),
     ],
   });
   assert.equal(ledger.pricingStatus.kind, 'PRICING_UNKNOWN');
@@ -234,4 +234,55 @@ test('degenerate context=0 observations never produce bleed entries', () => {
     ],
   });
   assert.equal(ledger.verified.entries.length, 0);
+});
+
+/* ---------------- F3: snapshot completion golden numbers ---------------- */
+
+test('F3 GOLDEN: every newly added model resolves with audit-verified prices', () => {
+  const expected: Array<[string, number, number, number, number]> = [
+    // model, input, read, write5m, write1h  ($/MTok, audit §1.2)
+    ['claude-fable-5', 5, 0.5, 6.25, 10],
+    ['claude-mythos-5', 2.5, 0.25, 3.125, 5],
+    ['claude-sonnet-5', 3, 0.3, 3.75, 6],
+    ['claude-opus-4-8', 5, 0.5, 6.25, 10],
+    ['claude-sonnet-4-6', 3, 0.3, 3.75, 6],
+    ['claude-opus-4-5', 15, 1.5, 18.75, 30],
+  ];
+  for (const [model, inp, rd, w5, w1h] of expected) {
+    const p = resolvePricing(model);
+    assert.equal(p.kind, 'priced', model);
+    if (p.kind !== 'priced') continue;
+    assert.equal(p.entry.inputPerMTok, inp, `${model} input`);
+    assert.equal(p.entry.cacheReadPerMTok, rd, `${model} read`);
+    assert.equal(p.entry.cacheWrite5mPerMTok, w5, `${model} write5m`);
+    assert.equal(p.entry.cacheWrite1hPerMTok, w1h, `${model} write1h`);
+  }
+});
+
+test('F3: opus-4-1 stays PRICING_UNKNOWN (not in audit — principle preserved)', () => {
+  assert.equal(resolvePricing('claude-opus-4-1-20250415').kind, 'PRICING_UNKNOWN');
+});
+
+test('F3 GOLDEN: opus-4-5 bleed uses the 15/1.5 price line', () => {
+  const ledger = computeCostLedger({
+    agent: 'claude-code',
+    observations: [
+      obs({ timestamp: T0 - 120_000, model: 'claude-opus-4-5', cacheReadTokens: 100_000 }),
+      obs({ timestamp: T0, model: 'claude-opus-4-5', cacheReadTokens: 0, cacheWriteTokens: 0, inputTokens: 100_000, contextTokens: 100_000 }),
+    ],
+  });
+  // 100000×(15−1.5)/1e6 = 1.35
+  assert.equal(ledger.verified.bleedUsd, 1.35);
+});
+
+test('F3 GOLDEN: mythos-5 partial miss at the 2.5/0.25 price line', () => {
+  const ledger = computeCostLedger({
+    agent: 'claude-code',
+    observations: [
+      obs({ timestamp: T0 - 120_000, model: 'claude-mythos-5', cacheReadTokens: 100_000 }),
+      obs({ timestamp: T0, model: 'claude-mythos-5', cacheReadTokens: 20_000, inputTokens: 80_000, contextTokens: 100_000 }),
+    ],
+  });
+  // uncached=80000×(2.5−0.25)/1e6 = 0.18
+  assert.equal(ledger.verified.entries[0]!.bleedUsd, 0.18);
 });
