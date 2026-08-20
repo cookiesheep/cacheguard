@@ -4,6 +4,14 @@
   "description": "Read-only prompt-cache observability for coding agents (Claude Code + Codex). See the cache, before it expires.",
   "type": "module",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cookiesheep/cacheguard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cookiesheep/cacheguard/issues"
+  },
+  "homepage": "https://github.com/cookiesheep/cacheguard#readme",
   "engines": {
     "node": ">=22.5.0"
   },

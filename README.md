@@ -107,9 +107,10 @@ TTL is never hardcoded: static policy (Anthropic 5m/1h, OpenAI GPT-5.6 30m) appl
 
 Requires Node.js ≥ 22.5 and existing Claude Code or Codex local data.
 
-```bash
-npm install -g cacheguard        # (pending publish — until then: git clone && npm install -g .)
+> **Install note:** cacheguard depends on `better-sqlite3`, which runs a native install script. If your npm prompts about unapproved install scripts (npm ≥ 11 with allow-scripts), run `npm approve-scripts better-sqlite3` (or use `--ignore-scripts=false`) — a prebuilt binary is downloaded for common platforms, no toolchain needed.
 
+```bash
+npm install -g cacheguard
 cacheguard status                # cache state of your most recent session
 cacheguard cost                  # the economic ledger (verified bleed / savings / exposure)
 cacheguard doctor                # why the misses happened, with evidence
