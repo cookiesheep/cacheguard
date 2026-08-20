@@ -8,3 +8,9 @@ Thumbs.db
 # runtime artifacts
 .omc/
 experiments/.claude-home/
+
+# research scratch (agent downloads)
+oc_src/
+tags*.json
+opencode_tree.json
+tree_v*.json
