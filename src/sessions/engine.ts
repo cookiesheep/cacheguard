@@ -8,6 +8,7 @@
  * Live tracking (watch): same snapshot first, then a JsonlTailer from EOF
  * feeds appends into the same pipeline.
  */
+import fs from 'node:fs';
 import type {
   CacheEvent,
   CacheEventType,
@@ -18,6 +19,8 @@ import type {
 import { ClaudeCodeAdapter } from '../adapters/claude-code/adapter.js';
 import { ObservationParser } from '../adapters/claude-code/parser.js';
 import { readBaseUrlHint } from '../adapters/claude-code/paths.js';
+import { CodexAdapter } from '../adapters/codex/adapter.js';
+import { CodexParser, type CodexAmbient } from '../adapters/codex/parser.js';
 import { readTailSnapshot, JsonlTailer } from '../collector/tailer.js';
 import { estimateCacheState, classifyFact } from '../cache/estimator.js';
 import { CacheGuardStore } from '../storage/db.js';
@@ -32,12 +35,14 @@ export interface SessionStatus {
 }
 
 export class SessionEngine {
-  readonly adapter: ClaudeCodeAdapter;
   readonly store: CacheGuardStore;
+  private readonly claudeAdapter: ClaudeCodeAdapter;
+  private readonly codexAdapter: CodexAdapter;
   /**
    * undefined = default endpoint (no override, no explicit URL);
    * null = endpoint explicitly unknown (--claude-dir override hid settings);
-   * string = the configured base URL.
+   * string = the configured base URL. Claude Code only — Codex has its own
+   * policy branch keyed on model family.
    */
   readonly baseUrlHint: string | null | undefined;
   /** In-memory last state per session — used for edge-triggered TTL_RISK events. */
@@ -46,19 +51,25 @@ export class SessionEngine {
   constructor(
     opts: {
       claudeDirOverride?: string | undefined;
+      codexDirOverride?: string | undefined;
       store?: CacheGuardStore | undefined;
     } = {},
   ) {
-    this.adapter = new ClaudeCodeAdapter(opts.claudeDirOverride);
+    this.claudeAdapter = new ClaudeCodeAdapter(opts.claudeDirOverride);
+    this.codexAdapter = new CodexAdapter(opts.claudeDirOverride ? undefined : opts.codexDirOverride);
     this.store = opts.store ?? new CacheGuardStore();
     this.baseUrlHint =
       readBaseUrlHint(opts.claudeDirOverride) ??
       (opts.claudeDirOverride ? null : undefined);
   }
 
-  /** Discover sessions, most recently active first. */
+  /** Discover sessions of ALL agents, most recently active first. */
   async discover(): Promise<DiscoveredSession[]> {
-    return this.adapter.discoverSessions();
+    const [claude, codex] = await Promise.all([
+      this.claudeAdapter.discoverSessions(),
+      this.codexAdapter.discoverSessions(),
+    ]);
+    return [...claude, ...codex].sort((a, b) => activityScore(b) - activityScore(a));
   }
 
   /**
@@ -76,7 +87,8 @@ export class SessionEngine {
 
     const estimate = estimateCacheState({
       observations: all,
-      baseUrl: this.baseUrlHint,
+      baseUrl: session.agent === 'codex' ? undefined : this.baseUrlHint,
+      agent: session.agent,
     });
     this.recordStateTransition(session.sessionId, estimate, all);
     return { session, snapshotObservations: snapshotObs, allObservations: all, estimate };
@@ -89,7 +101,8 @@ export class SessionEngine {
   reestimate(session: DiscoveredSession, observations: CacheObservation[]): SessionStatus {
     const estimate = estimateCacheState({
       observations,
-      baseUrl: this.baseUrlHint,
+      baseUrl: session.agent === 'codex' ? undefined : this.baseUrlHint,
+      agent: session.agent,
     });
     this.recordStateTransition(session.sessionId, estimate, observations);
     return { session, snapshotObservations: [], allObservations: observations, estimate };
@@ -101,7 +114,7 @@ export class SessionEngine {
     onUpdate: (status: SessionStatus) => void,
     onError?: (err: Error) => void,
   ): { stop: () => void } {
-    const parser = new ObservationParser();
+    const parser = session.agent === 'codex' ? new CodexParser() : new ObservationParser();
     const tailer = new JsonlTailer(session.filePath, {
       startAtEof: true,
       pollMs: 1000,
@@ -113,7 +126,8 @@ export class SessionEngine {
         this.persist(session, fresh, all);
         const estimate = estimateCacheState({
           observations: all,
-          baseUrl: this.baseUrlHint,
+          baseUrl: session.agent === 'codex' ? undefined : this.baseUrlHint,
+          agent: session.agent,
         });
         this.recordStateTransition(session.sessionId, estimate, all);
         onUpdate({ session, snapshotObservations: fresh, allObservations: all, estimate });
@@ -144,8 +158,33 @@ export class SessionEngine {
         `Failed reading session file ${session.filePath}: ${(err as Error).message}`,
       );
     }
+    if (session.agent === 'codex') {
+      // session_meta/turn_context live at the file head; a tail-only read
+      // would lose model/provider/version. Recover ambient state from the
+      // head, then parse the tail with it.
+      const ambient = this.codexAmbient(session.filePath);
+      const parser = new CodexParser(ambient);
+      return parser.parseBuffer(text, session.filePath);
+    }
     const parser = new ObservationParser();
     return parser.parseBuffer(text, session.filePath);
+  }
+
+  private codexAmbient(filePath: string): CodexAmbient {
+    try {
+      const st = fs.statSync(filePath);
+      const fd = fs.openSync(filePath, 'r');
+      try {
+        const len = Math.min(st.size, 256 * 1024);
+        const buf = Buffer.alloc(len);
+        const n = fs.readSync(fd, buf, 0, len, 0);
+        return CodexParser.ambientFromHead(buf.subarray(0, n).toString('utf8'));
+      } finally {
+        fs.closeSync(fd);
+      }
+    } catch {
+      return {};
+    }
   }
 
   private persist(
@@ -156,11 +195,11 @@ export class SessionEngine {
     const known = this.store.observationCount(session.sessionId);
     this.store.upsertSession({
       sessionId: session.sessionId,
-      agent: 'claude-code',
+      agent: session.agent,
       projectDir: session.projectDir,
       cwd: session.registry?.cwd,
       model: latestModel(all) ?? latestModel(fresh),
-      agentVersion: session.registry?.version,
+      agentVersion: session.registry?.version ?? latestVersion(all),
       startedAt: all[0]?.timestamp,
       lastSeen: all[all.length - 1]?.timestamp,
     });
@@ -242,6 +281,17 @@ function mergeObservations(
   const byKey = new Map<string, CacheObservation>();
   for (const o of [...a, ...b]) byKey.set(`${o.sessionId}:${o.requestId}`, o);
   return [...byKey.values()].sort((x, y) => x.timestamp - y.timestamp);
+}
+
+function activityScore(s: DiscoveredSession): number {
+  return Math.max(s.modifiedAt, s.registry?.updatedAt ?? 0);
+}
+
+function latestVersion(obs: CacheObservation[]): string | undefined {
+  for (let i = obs.length - 1; i >= 0; i--) {
+    if (obs[i]!.agentVersion) return obs[i]!.agentVersion;
+  }
+  return undefined;
 }
 
 function latestModel(obs: CacheObservation[]): string | undefined {

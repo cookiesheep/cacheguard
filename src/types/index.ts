@@ -6,7 +6,7 @@
  * (estimates) are strictly separated types — never merge them.
  */
 
-export type AgentKind = 'claude-code';
+export type AgentKind = 'claude-code' | 'codex';
 
 /** One LLM API response, as recovered from local telemetry. This is a FACT. */
 export interface CacheObservation {
@@ -21,6 +21,12 @@ export interface CacheObservation {
   outputTokens?: number | undefined;
   cacheReadTokens?: number | undefined;
   cacheWriteTokens?: number | undefined;
+  /**
+   * True when the source cannot report cache writes (field absent, or
+   * pre-5.6 Codex models where serde defaults it to 0). A zero here means
+   * "unknown", never "definitely no write".
+   */
+  cacheWriteUnknown?: boolean | undefined;
   /** input + cacheRead + cacheWrite (Anthropic usage semantics). */
   contextTokens?: number | undefined;
   fiveMinuteCacheTokens?: number | undefined;

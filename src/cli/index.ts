@@ -22,7 +22,8 @@ program
   .description('Read-only prompt-cache observability for coding agents (Phase 1: Claude Code)')
   .version('0.1.0')
   .option('--no-color', 'disable ANSI colors')
-  .option('--claude-dir <path>', 'override ~/.claude location');
+  .option('--claude-dir <path>', 'override ~/.claude location')
+  .option('--codex-dir <path>', 'override ~/.codex location');
 
 function colorEnabled(opts: { color?: boolean }): boolean {
   return opts.color !== false && process.stdout.isTTY === true;
@@ -59,8 +60,11 @@ program
   .option('--snapshot-bytes <n>', 'bytes of the session tail to parse', '4194304')
   .option('--json', 'machine-readable output')
   .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
-    const globals = program.opts() as { claudeDir?: string };
-    const engine = new SessionEngine({ claudeDirOverride: globals.claudeDir });
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
     try {
       const session = await pickSession(engine, sessionId);
       const snapshotBytes = Number(cmdOpts.snapshotBytes ?? 4194304);
@@ -71,7 +75,7 @@ program
         console.log(
           JSON.stringify(
             {
-              agent: 'claude-code',
+              agent: session.agent,
               session: session.sessionId,
               model: latest?.model,
               contextTokens: latest?.contextTokens,
@@ -103,8 +107,11 @@ program
   .argument('[sessionId]', 'session id (prefix match) or file path')
   .option('--interval <ms>', 're-render interval', '1000')
   .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
-    const globals = program.opts() as { claudeDir?: string };
-    const engine = new SessionEngine({ claudeDirOverride: globals.claudeDir });
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
     let first = true;
     let current: Parameters<typeof renderStatus>[0] | null = null;
     const render = (status: Parameters<typeof renderStatus>[0]) => {
@@ -143,20 +150,24 @@ program
   .command('sessions')
   .description('list discovered sessions, most recent first')
   .action(async () => {
-    const globals = program.opts() as { claudeDir?: string };
-    const engine = new SessionEngine({ claudeDirOverride: globals.claudeDir });
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
     try {
       const sessions = await engine.discover();
       if (sessions.length === 0) {
         console.log('No sessions found.');
         return;
       }
-      console.log('SESSION                               PROJECT                        REGISTRY     LAST ACTIVITY');
+      console.log('AGENT        SESSION                               PROJECT                        REGISTRY     LAST ACTIVITY');
       for (const s of sessions.slice(0, 25)) {
         const activity = Math.max(s.modifiedAt, s.registry?.updatedAt ?? 0);
         const ago = fmtDuration(Date.now() - activity);
         console.log(
           [
+            s.agent.padEnd(13),
             s.sessionId.slice(0, 36).padEnd(37),
             s.projectDir.slice(0, 30).padEnd(31),
             (s.registry?.status ?? '—').padEnd(12),
@@ -174,8 +185,11 @@ program
   .description('recent cache events for a session')
   .argument('[sessionId]', 'session id (defaults to most recent discovered)')
   .action(async (sessionId: string | undefined) => {
-    const globals = program.opts() as { claudeDir?: string };
-    const engine = new SessionEngine({ claudeDirOverride: globals.claudeDir });
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
     try {
       const session = await pickSession(engine, sessionId);
       const events = engine.store.eventsFor(session.sessionId, 50);
@@ -198,8 +212,11 @@ program
   .description('parse a full session file into the local DB (bounded memory, line-by-line)')
   .argument('<sessionId|path>', 'session id (prefix match) or JSONL path')
   .action(async (sessionArg: string) => {
-    const globals = program.opts() as { claudeDir?: string };
-    const engine = new SessionEngine({ claudeDirOverride: globals.claudeDir });
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
     try {
       const session = await pickSession(engine, sessionArg);
       const status = await engine.snapshot(session, Number.MAX_SAFE_INTEGER);

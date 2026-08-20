@@ -1,0 +1,4 @@
+{"timestamp":"2026-08-20T10:00:00.000Z","type":"session_meta","payload":{"id":"conv-synth-0001","session_id":"conv-synth-0001","cwd":"D:codedemo","originator":"codex_cli_rs","cli_version":"0.147.0","source":"local","model_provider":"custom","context_window":200000}}
+{"timestamp":"2026-08-20T10:00:00.100Z","type":"turn_context","payload":{"turn_id":"t1","cwd":"D:codedemo","model":"gpt-5.6-sol","effort":"high"}}
+{"timestamp":"2026-08-20T10:00:05.000Z","type":"event_msg","payload":{"type":"token_count","info":{"last_token_usage":{"input_tokens":20000,"cached_input_tokens":12000,"cache_write_input_tokens":0,"output_tokens":300,"reasoning_output_tokens":100,"total_tokens":20300},"total_token_usage":{"input_tokens":20000,"cached_input_tokens":12000,"cache_write_input_tokens":0,"output_tokens":300,"reasoning_output_tokens":100,"total_tokens":20300}}}}
+{"timestamp":"2026-08-20T10:0

@@ -13,6 +13,7 @@
 | Phase 0 — Investigation & Architecture | ✅ 完成 | 本机 schema 审计 + 官方机制调研 + 同类项目调研 + 技术栈决策 |
 | Phase 1 — Read-only Cache Monitor (MVP) | ✅ 实现并通过真实数据验证 | 见 §2 验收清单 |
 | Phase 1.5 — Controlled idle-time experiment | ✅ **完成 (2026-08-19)** | 核心结论: GLM 网关 TTL ∈ (20.1, 40.2]min; **read 刷新 TTL 成立** (2/2); 详见 [experiments/cache-ttl-validation.md](../experiments/cache-ttl-validation.md) 与 §5.5 |
+| Round 3 — CodexAdapter (跨 Agent 第一步) | ✅ 完成 (2026-08-20) | 真实数据验证 (本机 codex-cli 0.147, gpt-5.4/5.6); 见 §5.6 |
 | Phase 2 — Cost Engine | ⬜ 未开始 (gate 已通过) | 费率已调研 (§4); GLM cached token 全额计配额 → 省配额模型核心 |
 | Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
@@ -21,18 +22,28 @@
 ```
 src/
 ├── adapters/claude-code/   # adapter.ts(发现) paths.ts(定位) parser.ts(JSONL→观测)
-├── cache/estimator.ts      # 事实/推断状态机
+├── adapters/codex/         # CodexAdapter: 递归发现(zstd 跳过) + rollout parser(ambient 头提取)
+├── cache/estimator.ts      # 事实/推断状态机 (agent 感知)
 ├── collector/tailer.ts     # 增量 tail + 半行缓冲 + 截断检测
-├── policy/provider-policy.ts  # TTL 来源解析 (STATIC/RUNTIME/EMPIRICAL/UNKNOWN)
-├── sessions/engine.ts      # 管线编排 + 事件记录
+├── policy/provider-policy.ts  # TTL 来源解析 (Anthropic/OpenAI 双分支 + EMPIRICAL/UNKNOWN)
+├── sessions/engine.ts      # 多 agent 管线编排 + 事件记录
 ├── storage/db.ts           # SQLite (sessions/observations/cache_events)
-├── cli/                    # status / watch / sessions / events / backfill
-└── types/                  # 统一数据模型
-tests/  37 个用例 (parser 健壮性 / estimator 状态机 / policy / tailer / storage)
-docs/   claude-code-schema.md · architecture.md · development-plan.md · research-audit-2026-08-19.md
+├── cli/                    # status / watch / sessions / events / backfill (--claude-dir/--codex-dir)
+└── types/                  # 统一数据模型 (AgentKind: claude-code | codex)
+tests/  58 个用例 (双 parser 健壮性 / estimator / policy 双分支 / tailer / storage / codex 发现)
+docs/   claude-code-schema.md · codex-schema.md · architecture.md · development-plan.md · research-audit-2026-08-19.md
 experiments/  run-idle-experiment.mjs · soak-watch.mjs · cache-ttl-validation.md · results/logs
 scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 ```
+
+## 0.5 方向定型 (用户拍板, 2026-08-20, 不再讨论)
+
+**项目定位: 面向全球 Claude Code + Codex 用户的开源跨 Agent 缓存可观测工具 (ccusage 路线)。**
+
+- 目标: 用户量与社区; 经济账以美元为主 (订阅用户用 token/配额口径诚实展示);
+- Phase 3 自动保护**缓行**, 只读承诺保持;
+- GLM 网关支持保留为特性 (empirical TTL 估计是网关/OpenRouter 用户的差异化点), 不作主战场叙事;
+- 依据: ccusage 18k★ vs 全部 keepalive 工具 ≤21★; 官方面板 (ZCode 命中率栏、Claude Code /cost) 只覆盖自家 harness 的浅层汇总; 差异化 = **深度** (状态/TTL/根因/账本) + **广度** (跨 agent) + **诚实性** (verified vs inferred)。
 
 ## 1. Phase 0 结论 (2026-08-19)
 
@@ -147,6 +158,14 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 - **产品修复**: `--claude-dir` 覆盖时端点误判 STATIC_POLICY → 已修 (UNKNOWN/EMPIRICAL 降级 + 回归测试, 37 tests)。
 - **新事实入库**: ~21.4k 部分层 (3 次复现)、跨 session 分叉 ~768 tok、GLM cc 恒 0、cr 多为 256 倍数。
 
+### 5.6 Round 3: CodexAdapter 结论 (2026-08-20)
+
+- **真实数据验证通过** (非合成): 本机 codex-cli 0.147, 2026-03~08 rollouts, 模型 gpt-5.4 / gpt-5.6-sol / gpt-5.6-luna。发现→解析→入库→六状态展示全链路在真实 session 上工作 (`status 019fdbc0` → gpt-5.6-sol STATIC 30m; `status 019cc743` → gpt-5.4 自身历史 EMPIRICAL 1169s)。
+- **关键口径差异** (docs/codex-schema.md §4): OpenAI `input_tokens` **已包含** cached (total=input+output 实测精确成立) → contextTokens=input, 与 Anthropic 加法口径相反; 无 message.id 且 ordinal 缺失 → requestId=timestamp+input; pre-5.6 cache_write serde 缺省 0 → `cacheWriteUnknown` 标记。
+- **新真实发现**: custom provider 下 GPT-5.6 的 cache_write 恒 0 而缓存明确增长 (cached 跨请求 +20k) → 写入侧遥测对 Codex custom provider 不可信, Phase 2 写入成本只能用 cached 差分近似。
+- **工程**: policy 双分支 (GPT-5.6+ STATIC 30m / pre-5.6 UNKNOWN·EMPIRICAL); engine 多 agent 双发现; CLI `--codex-dir`; zstd 检测跳过 (合成测试); 58 测试全绿 (37→58, +21)。
+- **npm 预检** (2026-08-20): `cacheguard` ✅ 可用 (E404), `cacheguard-cli` ✅ 可用, `cache-guard` ❌ 已被 caching.ai 占用。package.json 已整理 (description/keywords 双 agent; files 白名单 dist+README; bin 就绪)。**未发布** — 发布动作待用户指令。
+
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 
 官方: [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) · [Messages API](https://docs.anthropic.com/en/api/messages) · [Claude Code prompt caching](https://code.claude.com/docs/en/prompt-caching) · [Monitoring/OTEL](https://code.claude.com/docs/en/monitoring-usage) · [Statusline](https://code.claude.com/docs/en/statusline)
@@ -167,6 +186,7 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 1. ✅ Phase 1.5 idle experiment — **gate PASSED** (2026-08-19)
 2. ✅ watch soak 首份数据 (180min 空闲 session); ⬜ 日间高频写入 soak (audit §2.3.2: 挂真实工作日)
 3. ✅ git 初始化 + 首次提交; ⬜ 远程仓库 (发布前确认 npm `cacheguard` 包名, audit 注: `cache-guard` 已被 caching.ai 占用)
-4. ⬜ Phase 2 Cost Engine 设计文档 (gate 已开; 逐出概率 + GLM 配额账本为一等输入)
+4. ⬜ Phase 2 Cost Engine 设计文档 (gate 已开; 逐出概率 + GLM 配额账本为一等输入; Codex 写入成本差分近似)
 5. ⬜ OTEL 通道 spike (duration_ms 维度; audit §2.4.3)
 6. ⬜ audit §2.3.3: 目标客群需求验证 (GLM/中转站社区投放 status 截图)
+7. ⬜ 发布准备 (发布动作需用户指令): npm publish 前再查包名、README 双 agent 示例、GitHub 仓库与 CI

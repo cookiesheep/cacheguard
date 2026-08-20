@@ -90,6 +90,8 @@ export interface EstimatorInput {
   observations: CacheObservation[];
   /** null = endpoint explicitly unknown; see PolicyInput.baseUrl. */
   baseUrl?: string | null | undefined;
+  /** Agent family — routes to the provider-specific TTL policy branch. */
+  agent?: import('../types/index.js').AgentKind | undefined;
   now?: number | undefined;
   atRiskThresholdMs?: number | undefined;
 }
@@ -112,6 +114,7 @@ export function estimateCacheState(input: EstimatorInput): CacheStateEstimate {
     observations: sorted,
     baseUrl: input.baseUrl,
     model: latest.model,
+    agent: input.agent,
   });
 
   const facts = factsFromObservations(sorted);

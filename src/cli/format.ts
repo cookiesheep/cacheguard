@@ -60,9 +60,12 @@ export function renderStatus(status: SessionStatus, opts: RenderOptions = {}): s
   const dim = (s: string) => (color ? `${DIM}${s}${RESET}` : s);
   const bold = (s: string) => (color ? `${BOLD}${s}${RESET}` : s);
 
+  const agentLabel =
+    session.agent === 'codex' ? 'Codex' : session.agent === 'claude-code' ? 'Claude Code' : session.agent;
+  const version = session.registry?.version ?? latest?.agentVersion;
   lines.push(bold('CacheGuard') + dim(' — read-only cache observability'));
   lines.push('');
-  lines.push(`Agent          Claude Code${session.registry?.version ? ` ${session.registry.version}` : ''}`);
+  lines.push(`Agent          ${agentLabel}${version ? ` ${version}` : ''}`);
   lines.push(`Session        ${session.sessionId}`);
   lines.push(`Project        ${session.registry?.cwd ?? session.projectDir}`);
   lines.push(`Model          ${latest?.model ?? '—'}`);

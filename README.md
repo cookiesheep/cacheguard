@@ -1,7 +1,7 @@
 # CacheGuard
 
-> **让 Coding Agent 的 Prompt Cache 看得见、算得清、自动保护。**
-> Read-only prompt-cache observability for coding agents.
+> **让 Coding Agent 的 Prompt Cache 看得见、算得清、值得时才保护。**
+> Read-only prompt-cache observability for coding agents — **Claude Code + Codex**.
 
 ```
 $ cacheguard status
@@ -47,9 +47,16 @@ CacheGuard 把这个过程变成看得见的: 当前 context 多大、命中了�
 - 不知道就显示 `UNKNOWN`, TTL 来源不明就标注 `UNKNOWN (placeholder)`;
 - **事实与推断绝不混同**。UI 上的每个字都能回答"你怎么知道的"。
 
+## 支持的 Agent
+
+| Agent | 数据源 | TTL 策略 | 验证状态 |
+|---|---|---|---|
+| **Claude Code** | `~/.claude/projects/**.jsonl` (cache_read / cache_creation / ephemeral_5m / 1h) | Anthropic 官方 5m/1h; 网关 (GLM/OpenRouter/…) 自动降级为本机 EMPIRICAL 估计 | 真实数据 + 受控 idle 实验 (TTL ∈ (20,40]min, read 刷新 VERIFIED) |
+| **Codex CLI** | `~/.codex/sessions/**/rollout-*.jsonl` (token_count: cached_input_tokens / cache_write) | GPT-5.6+ = 官方 30min; pre-5.6 = 诚实的 UNKNOWN (5-10min vs 24h 本地不可区分) + EMPIRICAL | 真实数据 (gpt-5.4 / gpt-5.6) |
+
 ## 安装与使用
 
-要求: Node.js ≥ 22.5, 已使用过 Claude Code (`~/.claude/projects` 有数据)。
+要求: Node.js ≥ 22.5, 已使用过 Claude Code (`~/.claude/projects` 有数据) 或 Codex (`~/.codex/sessions`)。
 
 ```bash
 npm install -g .        # 从源码安装 (cacheguard 命令)
@@ -59,8 +66,10 @@ cacheguard watch        # 实时刷新 (TTL 倒计时随时间推进)
 cacheguard sessions     # 列出发现的 session
 cacheguard events       # cache 事件历史 (VERIFIED_MISS / PARTIAL_MISS / TTL_RISK …)
 cacheguard backfill <id> # 全量解析一个 session 入库
-cacheguard status --json # 机器可读输出
+cacheguard status --json # 机器可读输出 (claude-code 与 codex 输出同构)
 ```
+
+两个 agent 的 session 自动混合发现 (`sessions` 带 AGENT 列); `--claude-dir` / `--codex-dir` 可覆盖数据目录。
 
 数据存于本地 `~/.cacheguard/cacheguard.db` (SQLite) — Claude Code 的 JSONL 约 30 天会被清理, CacheGuard 保留自己的历史。
 

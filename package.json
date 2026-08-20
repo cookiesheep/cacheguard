@@ -1,7 +1,7 @@
 {
   "name": "cacheguard",
   "version": "0.1.0",
-  "description": "Read-only prompt-cache observability for coding agents. See the cache, before it expires.",
+  "description": "Read-only prompt-cache observability for coding agents (Claude Code + Codex). See the cache, before it expires.",
   "type": "module",
   "license": "Apache-2.0",
   "engines": {
@@ -26,10 +26,13 @@
   },
   "keywords": [
     "claude-code",
+    "codex",
     "prompt-cache",
+    "cached-tokens",
     "telemetry",
     "llm",
-    "observability"
+    "observability",
+    "token-usage"
   ],
   "dependencies": {
     "better-sqlite3": "^12.2.0",

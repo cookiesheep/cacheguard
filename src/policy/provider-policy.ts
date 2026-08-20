@@ -14,10 +14,11 @@
  *   OpenRouter, …) implement their own regimes — static policy only applies
  *   when the endpoint is api.anthropic.com.
  */
-import type { CacheObservation, TtlPolicy } from '../types/index.js';
+import type { AgentKind, CacheObservation, TtlPolicy } from '../types/index.js';
 
 export const ANTHROPIC_TTL_5M_MS = 5 * 60 * 1000;
 export const ANTHROPIC_TTL_1H_MS = 60 * 60 * 1000;
+export const CODEX_TTL_30M_MS = 30 * 60 * 1000;
 
 export interface PolicyInput {
   /** Most recent observations, oldest first, deduped. */
@@ -32,6 +33,8 @@ export interface PolicyInput {
   baseUrl?: string | null | undefined;
   /** Model of the latest observation, if any. */
   model?: string | undefined;
+  /** Agent family; inferred from observations when omitted. */
+  agent?: AgentKind | undefined;
 }
 
 /** Observed survival evidence gathered from consecutive request pairs. */
@@ -127,6 +130,38 @@ function empiricalPolicy(evidence: TtlEvidence): TtlPolicy | null {
 export function resolveTtlPolicy(input: PolicyInput): TtlPolicy {
   const { observations } = input;
 
+  // Codex branch — OpenAI caching regimes (audit 2026-08-19 §1.3):
+  //   GPT-5.6+:   30-minute precise TTL (prompt_cache_options.ttl='30m'),
+  //               reuse refreshes without a write fee.
+  //   pre-GPT-5.6: in-memory 5-10min OR extended retention up to 24h
+  //               (non-ZDR orgs default 24h since 2026-05) — the two are
+  //               INDISTINGUISHABLE from local session data. We must never
+  //               pretend to know: UNKNOWN unless this machine's history
+  //               provides empirical evidence.
+  //   Custom providers (session_meta.model_provider != openai) may deviate
+  //   from the documented regime; noted in the reason, reliability lowered.
+  const agent = input.agent ?? observations[observations.length - 1]?.agent;
+  if (agent === 'codex') {
+    const model = input.model ?? observations[observations.length - 1]?.model;
+    if (model && isGpt56Family(model)) {
+      return {
+        ttlMs: CODEX_TTL_30M_MS,
+        source: 'STATIC_POLICY',
+        reason: `${model}: documented GPT-5.6 regime — 30-minute TTL, refreshed on reuse. Custom providers may deviate.`,
+        reliability: 0.85,
+      };
+    }
+    const empirical = empiricalPolicy(extractTtlEvidence(observations));
+    if (empirical) return empirical;
+    return {
+      ttlMs: 5 * 60 * 1000,
+      source: 'UNKNOWN',
+      reason: `${model ?? 'Unknown model'} predates GPT-5.6: TTL is 5-10min in-memory OR up to 24h extended retention — the two cannot be distinguished from local data. Countdown assumes 5m as a conservative placeholder.`,
+      reliability: 0.2,
+    };
+  }
+
+  // Claude Code branch — Anthropic regimes.
   // 1. Runtime regime evidence: 1h ephemeral writes in recent history.
   const recent = observations.slice(-50);
   if (recent.some((o) => (o.oneHourCacheTokens ?? 0) > 0)) {
@@ -173,6 +208,12 @@ export function resolveTtlPolicy(input: PolicyInput): TtlPolicy {
     reason: `Non-Anthropic or unverified endpoint (${safeHost(input.baseUrl)}); no survival evidence yet. Countdown assumes 5m as a placeholder — treat as low confidence.`,
     reliability: 0.25,
   };
+}
+
+/** GPT-5.6+ model family → 30-minute TTL regime applies. */
+function isGpt56Family(model: string): boolean {
+  const m = model.toLowerCase();
+  return /^gpt-5\.6/.test(m) || /^gpt-5\.[7-9]/.test(m) || /^gpt-[6-9]/.test(m);
 }
 
 function safeHost(url?: string | null): string {
