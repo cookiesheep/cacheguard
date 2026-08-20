@@ -8,12 +8,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import Database from 'better-sqlite3';
+import { createRequire } from 'node:module';
+import type BetterSqlite3 from 'better-sqlite3';
 import type {
   CacheEvent,
   CacheObservation,
   StoredSession,
 } from '../types/index.js';
+
+/**
+ * The native sqlite driver is loaded LAZILY: `cacheguard statusline` runs on
+ * every Claude Code UI event and must never pay the ~100ms native-module
+ * import cost (Round 7 perf fix; process P95 went 330ms → well under budget).
+ */
+const loadDriver = (): typeof BetterSqlite3 => {
+  const require = createRequire(import.meta.url);
+  return require('better-sqlite3') as typeof BetterSqlite3;
+};
 
 export function defaultDbPath(): string {
   const override = process.env.CACHEGUARD_DB;
@@ -22,11 +33,11 @@ export function defaultDbPath(): string {
 }
 
 export class CacheGuardStore {
-  private readonly db: Database.Database;
+  private readonly db: BetterSqlite3.Database;
 
   constructor(dbPath: string = defaultDbPath()) {
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    this.db = new Database(dbPath);
+    this.db = loadDriver()(dbPath);
     this.db.pragma('journal_mode = WAL');
     this.db.pragma('busy_timeout = 5000'); // concurrent status/watch processes
     this.db.exec(`
