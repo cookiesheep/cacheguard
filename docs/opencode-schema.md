@@ -68,7 +68,7 @@ cacheRatio    = cache.read / contextTokens
 | 字段 | 稳定性 | 说明 |
 |---|---|---|
 | `message.data.tokens.{input,cache.read/write,output}` | 高 (26/26 有 tokens) | 形状来自 OpenCode 归一化层, 跨 provider 一致 |
-| `tokens.total` 不变量 | **高 (23/23 非退化)** | §3 口径依据 (主证据为真实数据不变量; 源码形状见 message.ts schema) |
+| `tokens.total` 不变量 | **高 (23/23 非退化)** | §3 口径依据 — 真实数据不变量 + 源码 additive 契约双确认 |
 | `modelID` / `providerID` | 高 | |
 | `time.created` | 高 | epoch ms; 缺失时回退行级 time_created |
 | 全零退化行 | 存在 (3/26) | 跳过 (F2 规则) |
