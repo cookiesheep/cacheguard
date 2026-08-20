@@ -24,6 +24,29 @@ cacheguard backfill    # 全量解析入库
 
 所有命令支持 `--json`; `--claude-dir` / `--codex-dir` 覆盖数据目录。
 
+### 状态栏集成 (每一轮都看得见)
+
+Claude Code 官方 statusline 机制会在每次 UI 事件时调用你配置的命令 — 官方支持通道, 无 JSONL 漂移风险。在 `~/.claude/settings.json` 加入:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "cacheguard statusline"
+  }
+}
+```
+
+输入框下方即得紧凑状态行, 如:
+
+```
+♻ 97% · TTL 2m14s · bleed $0.45
+⏳ 99% · TTL 41s · bleed 381k tok   (配额模式, 如 GLM 网关)
+✗ 97% · TTL expired
+```
+
+设计要点: 只读 1MB 会话尾部 (管线 P95 ≈ 5ms), 不读写数据库; 无遥测时输出中性的 `cacheguard: no telemetry`, 绝不报错刷屏。Codex 无此机制, 仅限 Claude Code。
+
 ## 诚实性原则 (与官方统计栏的差异点)
 
 我们观察不到 GPU 上的 KV cache — 所以绝不假装。每个数字带认知级别:

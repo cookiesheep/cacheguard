@@ -1,5 +1,7 @@
 # CacheGuard
 
+[![CI](https://github.com/cookiesheep/cacheguard/actions/workflows/ci.yml/badge.svg)](https://github.com/cookiesheep/cacheguard/actions/workflows/ci.yml)
+
 > **See your coding agent's prompt cache — before it expires.**
 > Read-only prompt-cache observability for Claude Code and Codex. Local-first, zero network, honest numbers.
 
@@ -119,6 +121,29 @@ cacheguard sessions              # list sessions across both agents
 ```
 
 `--json` on every command. `--claude-dir` / `--codex-dir` override data locations.
+
+### Statusline setup (see it on every turn)
+
+Claude Code's official statusline calls a command of your choice on every UI event — an officially supported channel with zero JSONL-drift risk. Add to `~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "cacheguard statusline"
+  }
+}
+```
+
+You get a compact line under the input box, e.g.:
+
+```
+♻ 97% · TTL 2m14s · bleed $0.45
+⏳ 99% · TTL 41s · bleed 381k tok   (quota mode, e.g. GLM gateways)
+✗ 97% · TTL expired
+```
+
+Design notes: it reads only a 1MB session tail (pipeline P95 ≈ 5ms, never touches the DB, never writes anything); when there is no telemetry it prints a neutral `cacheguard: no telemetry` line instead of erroring. Codex has no statusline mechanism, so this is Claude Code–only.
 
 ## Privacy (a promise, not a setting)
 
