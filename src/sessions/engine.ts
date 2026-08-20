@@ -42,6 +42,7 @@ export class SessionEngine {
   private readonly claudeAdapter: ClaudeCodeAdapter;
   private readonly codexAdapter: CodexAdapter;
   private readonly opencodeAdapter: OpenCodeAdapter;
+  private readonly opencodeDir: string | undefined;
   /**
    * undefined = default endpoint (no override, no explicit URL);
    * null = endpoint explicitly unknown (--claude-dir override hid settings);
@@ -62,7 +63,8 @@ export class SessionEngine {
   ) {
     this.claudeAdapter = new ClaudeCodeAdapter(opts.claudeDirOverride);
     this.codexAdapter = new CodexAdapter(opts.codexDirOverride);
-    this.opencodeAdapter = new OpenCodeAdapter(opts.opencodeDirOverride ?? process.env.CACHEGUARD_OPENCODE_DIR);
+    this.opencodeDir = opts.opencodeDirOverride ?? process.env.CACHEGUARD_OPENCODE_DIR;
+    this.opencodeAdapter = new OpenCodeAdapter(this.opencodeDir);
     this.store = opts.store ?? new CacheGuardStore();
     this.baseUrlHint =
       readBaseUrlHint(opts.claudeDirOverride) ??
@@ -180,9 +182,12 @@ export class SessionEngine {
     if (session.agent === 'opencode') {
       // DB-backed: map the byte budget to a row limit (~1KB/row heuristic);
       // cost/doctor pass MAX_SAFE_INTEGER → all rows (F4 determinism).
+      // CI-caught bug (Round 8): must use THIS engine's configured override,
+      // not the raw env — machines without a real ~/.local/share/opencode
+      // would silently read nothing.
       const rows = readOpenCodeMessages(session.sessionId, {
         limitRows: Math.floor(snapshotBytes / 1024) || 500,
-        dirOverride: process.env.CACHEGUARD_OPENCODE_DIR,
+        dirOverride: this.opencodeDir,
       });
       const parser = new OpenCodeParser();
       return parser
