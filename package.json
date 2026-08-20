@@ -1,9 +1,12 @@
 {
   "name": "@cookiesheep/cacheguard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Read-only prompt-cache observability for coding agents (Claude Code + Codex). See the cache, before it expires.",
   "type": "module",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cookiesheep/cacheguard.git"
