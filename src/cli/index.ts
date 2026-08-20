@@ -5,6 +5,7 @@
  */
 import { Command } from 'commander';
 import { SessionEngine } from '../sessions/engine.js';
+import { computeCostLedger, type CostLedger } from '../cost/engine.js';
 import {
   renderStatus,
   fmtTokens,
@@ -94,7 +95,19 @@ program
           ),
         );
       } else {
-        console.log(renderStatus(status, { color: colorEnabled(program.opts()) }));
+        const ledger = computeCostLedger({
+          agent: session.agent,
+          observations: status.allObservations,
+        });
+        let bleedLine: string | undefined;
+        if (ledger.verified.entries.length > 0) {
+          const amt =
+            ledger.pricingStatus.kind === 'priced' && ledger.verified.bleedUsd !== undefined
+              ? '$' + ledger.verified.bleedUsd.toFixed(ledger.verified.bleedUsd < 0.1 ? 4 : 2)
+              : fmtTokens(ledger.verified.lostContextTokens) + ' tok';
+          bleedLine = `Cache bleed (verified): ${amt}  ${ledger.verified.entries.length} events`;
+        }
+        console.log(renderStatus(status, { color: colorEnabled(program.opts()), bleedLine }));
       }
     } finally {
       engine.store.close();
@@ -208,6 +221,39 @@ program
   });
 
 program
+  .command('cost')
+  .description('economic ledger for a session: verified cache bleed, savings, cold exposure')
+  .argument('[sessionId]', 'session id (prefix match); defaults to most recent')
+  .option('--all', 'aggregate view across all sessions in the local DB')
+  .option('--json', 'machine-readable output')
+  .action(async (sessionId: string | undefined, cmdOpts: Record<string, unknown>) => {
+    const globals = program.opts() as { claudeDir?: string; codexDir?: string };
+    const engine = new SessionEngine({
+      claudeDirOverride: globals.claudeDir,
+      codexDirOverride: globals.codexDir,
+    });
+    try {
+      if (cmdOpts.all) {
+        await runCostAll(engine, cmdOpts.json as boolean | undefined);
+        return;
+      }
+      const session = await pickSession(engine, sessionId);
+      const status = await engine.snapshot(session);
+      const ledger = computeCostLedger({
+        agent: session.agent,
+        observations: status.allObservations,
+      });
+      if (cmdOpts.json) {
+        console.log(JSON.stringify({ session: session.sessionId, ...ledger }, null, 2));
+      } else {
+        console.log(renderLedger(ledger, session.sessionId, colorEnabled(program.opts())));
+      }
+    } finally {
+      engine.store.close();
+    }
+  });
+
+program
   .command('backfill')
   .description('parse a full session file into the local DB (bounded memory, line-by-line)')
   .argument('<sessionId|path>', 'session id (prefix match) or JSONL path')
@@ -237,4 +283,92 @@ program.parseAsync(process.argv).catch((err: Error) => {
 
 function shorten(s: string, n: number): string {
   return s.length > n ? s.slice(0, n - 1) + '…' : s;
+}
+
+const ATTR_LABEL: Record<string, string> = {
+  'suspected-ttl': 'suspected TTL',
+  compaction: 'compaction',
+  'suspected-prefix-break': 'suspected prefix break',
+  unknown: 'unknown',
+};
+
+function fmtUsd(v: number | undefined): string {
+  if (v === undefined) return '—';
+  return '$' + v.toFixed(v < 0.1 && v > 0 ? 4 : 2);
+}
+
+export function renderLedger(ledger: CostLedger, sessionId: string, color: boolean): string {
+  const dim = (s: string) => (color ? `[2m${s}[0m` : s);
+  const bold = (s: string) => (color ? `[1m${s}[0m` : s);
+  const L: string[] = [];
+  const t = ledger.totals;
+  const priced = ledger.pricingStatus.kind === 'priced';
+  const quota = ledger.pricingStatus.kind === 'quota';
+  L.push(bold('CacheGuard cost') + dim(` — pricing snapshot ${ledger.snapshotDate}`));
+  L.push(`Session        ${sessionId}`);
+  L.push(`Agent          ${ledger.agent}  ${dim(ledger.totals.models.join(', ').slice(0, 50))}`);
+  L.push('');
+  L.push(`Requests       ${t.requests}`);
+  L.push(`Input (unc.)   ${fmtTokens(t.inputTokens)} tok`);
+  L.push(`Cache Read     ${fmtTokens(t.cacheReadTokens)} tok`);
+  L.push(`Cache Write    ${fmtTokens(t.cacheWriteTokens)} tok`);
+  L.push(`Output         ${fmtTokens(t.outputTokens)} tok`);
+  if (ledger.spendUsd) {
+    L.push(`Prefill Spend  ${fmtUsd(ledger.spendUsd.prefillUsd)} ${dim(`[${ledger.spendUsd.source}]`)}`);
+    if (ledger.spendUsd.outputUsd !== undefined) {
+      L.push(`Output Spend   ${fmtUsd(ledger.spendUsd.outputUsd)} ${dim('[snapshot]')}`);
+    }
+    L.push(`Cache Saving   ${fmtUsd(ledger.savingsVsNoCacheUsd)} ${dim('vs no-cache world')}`);
+  } else if (quota) {
+    L.push(dim('Pricing       quota mode (cached tokens count fully) — token ledger only'));
+  } else {
+    L.push(dim('Pricing       PRICING_UNKNOWN — token ledger only, no USD invented'));
+  }
+  L.push('');
+  const bleedLabel = priced ? fmtUsd(ledger.verified.bleedUsd) : `${fmtTokens(ledger.verified.lostContextTokens)} tok`;
+  L.push(bold(`Cache Bleed (verified): ${bleedLabel}`) + dim(`  — ${ledger.verified.entries.length} MISS/PARTIAL events`));
+  for (const e of ledger.verified.entries.slice(-8)) {
+    const when = new Date(e.timestamp).toLocaleString();
+    const amt = e.bleedUsd !== undefined ? fmtUsd(e.bleedUsd) : `${fmtTokens(Math.max(0, e.contextTokens - e.cacheReadTokens))} tok`;
+    const extra: string[] = [ATTR_LABEL[e.attribution] ?? e.attribution];
+    if (e.lowerBound) extra.push('lower bound');
+    if (e.inferredWriteSurchargeUsd !== undefined) extra.push(`write +${fmtUsd(e.inferredWriteSurchargeUsd)} (inferred)`);
+    L.push(`  ${when}  ${amt.padEnd(10)} ${dim(extra.join(' · '))}`);
+  }
+  if (ledger.verified.entries.length > 8) {
+    L.push(dim(`  … ${ledger.verified.entries.length - 8} earlier entries (see --json)`));
+  }
+  L.push('');
+  const exp = priced
+    ? `${fmtUsd(ledger.estimated.coldExposureUsd)} ${dim('[estimated]')}`
+    : `${fmtTokens(ledger.estimated.coldExposureTokens)} tok ${dim('[estimated]')}`;
+  L.push(`Cold Exposure  ${exp}`);
+  L.push(dim(`assumption: ${ledger.estimated.assumption}`));
+  return L.join('\n');
+}
+
+async function runCostAll(engine: SessionEngine, json: boolean | undefined): Promise<void> {
+  const rows: Array<{ agent: string; sessionId: string; bleedUsd?: number | undefined; lostTok: number; requests: number }> = [];
+  for (const s of engine.store.listSessions()) {
+    const obs = engine.store.observationsFor(s.sessionId, 10_000);
+    if (obs.length === 0) continue;
+    const ledger = computeCostLedger({ agent: s.agent, observations: obs });
+    rows.push({
+      agent: s.agent,
+      sessionId: s.sessionId,
+      bleedUsd: ledger.verified.bleedUsd,
+      lostTok: ledger.verified.lostContextTokens,
+      requests: ledger.totals.requests,
+    });
+  }
+  rows.sort((a, b) => (b.bleedUsd ?? 0) - (a.bleedUsd ?? 0) || b.lostTok - a.lostTok);
+  if (json) {
+    console.log(JSON.stringify(rows, null, 2));
+    return;
+  }
+  console.log(`Cross-session verified bleed (local DB, snapshot ${new Date().toISOString().slice(0, 10)})`);
+  for (const r of rows.slice(0, 20)) {
+    const amt = r.bleedUsd !== undefined ? '$' + r.bleedUsd.toFixed(4) : fmtTokens(r.lostTok) + ' tok';
+    console.log(`${r.agent.padEnd(12)}${r.sessionId.slice(0, 12).padEnd(14)}${amt.padEnd(14)}${r.requests} requests`);
+  }
 }

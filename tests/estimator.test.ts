@@ -199,3 +199,25 @@ test('policy: null baseUrl (endpoint hidden by --claude-dir) never claims STATIC
   assert.ok(p.reason.includes('unverified'));
   assert.ok(p.reliability <= 0.3);
 });
+
+test('F2 regression: context=0 degenerate observation produces no fact (no fake VERIFIED_MISS)', () => {
+  const degenerate = obs({
+    timestamp: T0,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+    contextTokens: 0,
+    inputTokens: 0,
+  });
+  const fact = classifyFact(degenerate, obs({ timestamp: T0 - 60_000 }));
+  assert.equal(fact, null);
+  // and in a sequence: state must come from the real facts, not the degenerate one
+  const est = estimateCacheState({
+    observations: [
+      obs({ timestamp: T0 - 60_000, cacheReadTokens: 50_000, contextTokens: 51_000 }),
+      degenerate,
+    ],
+    baseUrl: 'https://api.anthropic.com',
+    now: T0,
+  });
+  assert.notEqual(est.state, 'VERIFIED_MISS');
+});

@@ -33,6 +33,8 @@ export interface CacheObservation {
   oneHourCacheTokens?: number | undefined;
   /** True when usage existed but cache fields were missing (version variance). */
   partial: boolean;
+  /** Provider-computed cost from the record (claude-code costUSD), if present. */
+  officialCostUsd?: number | undefined;
   /** File the observation was recovered from. */
   source: string;
   /** Claude Code version string carried by the record, if any. */

@@ -74,6 +74,12 @@ export class CacheGuardStore {
         value TEXT
       );
     `);
+    // Lite migration for pre-v0.2 databases (must run AFTER table creation).
+    try {
+      this.db.exec('ALTER TABLE observations ADD COLUMN official_cost_usd REAL');
+    } catch {
+      /* column already exists */
+    }
   }
 
   upsertSession(s: StoredSession): void {
@@ -128,11 +134,13 @@ export class CacheGuardStore {
       `INSERT OR IGNORE INTO observations
         (session_id, request_id, timestamp, model, input_tokens, output_tokens,
          cache_read_tokens, cache_write_tokens, context_tokens,
-         five_minute_cache_tokens, one_hour_cache_tokens, partial, source, agent_version)
+         five_minute_cache_tokens, one_hour_cache_tokens, partial, source, agent_version,
+         official_cost_usd)
        VALUES
         (@sessionId, @requestId, @timestamp, @model, @inputTokens, @outputTokens,
          @cacheReadTokens, @cacheWriteTokens, @contextTokens,
-         @fiveMinuteCacheTokens, @oneHourCacheTokens, @partial, @source, @agentVersion)`,
+         @fiveMinuteCacheTokens, @oneHourCacheTokens, @partial, @source, @agentVersion,
+         @officialCostUsd)`,
     );
     const tx = this.db.transaction((rows: CacheObservation[]) => {
       const added: CacheObservation[] = [];
@@ -152,6 +160,7 @@ export class CacheGuardStore {
           partial: o.partial ? 1 : 0,
           source: o.source,
           agentVersion: o.agentVersion ?? null,
+          officialCostUsd: o.officialCostUsd ?? null,
         });
         if (res.changes > 0) added.push(o);
       }
@@ -206,7 +215,7 @@ export class CacheGuardStore {
       .all() as Array<Record<string, unknown>>;
     return rows.map((r) => ({
       sessionId: String(r.session_id),
-      agent: 'claude-code',
+      agent: (r.agent as 'claude-code' | 'codex') ?? 'claude-code',
       projectDir: (r.project_dir as string | undefined) ?? undefined,
       cwd: (r.cwd as string | undefined) ?? undefined,
       model: (r.model as string | undefined) ?? undefined,
@@ -252,5 +261,6 @@ function rowToObservation(r: Record<string, unknown>): CacheObservation {
     partial: Number(r.partial) === 1,
     source: String(r.source ?? ''),
     agentVersion: (r.agent_version as string) ?? undefined,
+    officialCostUsd: (r.official_cost_usd as number | null) ?? undefined,
   };
 }

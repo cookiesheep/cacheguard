@@ -30,6 +30,7 @@ interface RecordShape {
   sessionId?: unknown;
   version?: unknown;
   isSidechain?: unknown;
+  costUSD?: unknown;
   message?: {
     id?: unknown;
     model?: unknown;
@@ -154,6 +155,7 @@ export class ObservationParser {
       agent: 'claude-code',
       sessionId: str(record.sessionId) ?? 'unknown-session',
       requestId: requestId ?? `no-id:${timestamp}:${this.stats.observations}`,
+      officialCostUsd: num(record.costUSD),
       model,
       inputTokens,
       outputTokens,

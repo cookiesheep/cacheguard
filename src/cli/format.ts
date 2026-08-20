@@ -46,6 +46,8 @@ export function colorState(state: string): string {
 export interface RenderOptions {
   color?: boolean;
   detail?: boolean;
+  /** Optional verified-bleed headline from the cost engine (status only). */
+  bleedLine?: string | undefined;
 }
 
 /** The `cacheguard status` panel. Data must be real; missing data shows as —. */

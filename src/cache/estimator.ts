@@ -45,6 +45,9 @@ export function classifyFact(
   prev?: CacheObservation,
 ): CacheFact | null {
   if (obs.cacheReadTokens === undefined || obs.contextTokens === undefined) return null;
+  // F2: degenerate records (context 0 — error/placeholder usage) prove nothing;
+  // they must never surface as a scary "VERIFIED_MISS" fact.
+  if (obs.contextTokens <= 0) return null;
   const prevContext = prev?.contextTokens ?? 0;
 
   if ((obs.cacheReadTokens ?? 0) > 0) {
