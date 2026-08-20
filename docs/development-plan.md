@@ -19,6 +19,7 @@
 | Phase 2 — Cost Engine v1 | ✅ 完成 (2026-08-20) | 双账本 (verified bleed / estimated exposure) + vendored 费率快照 + 口径感知公式; 见 §5.7 与 docs/cost-engine.md |
 | Round 5 — Cache Doctor + F3 + OTel spike | ✅ 完成 (2026-08-20) | 归因深化 (model-switch/重复残层/时间聚类) + 快照补全 6 模型 + OTel 结论=暂缓; 见 §5.8 |
 | Round 6 — 发布准备 (未发布) | ✅ 完成 (2026-08-20) | F4 账本确定性 + F5 法务 + 双语 README + 安装冒烟; 见 §5.9 |
+| Round 7 — statusline 集成 + CI | ✅ 完成 (2026-08-20) | 官方 statusline 通道 + 3 OS × node 22/24 CI; 见 §5.10 |
 | Phase 2+ — Cost Engine 深化 | ⬜ | LiteLLM 快照导入、per-day 汇总 |
 | Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
@@ -196,6 +197,16 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 - **双语 README**: 英文主文档 (三张真实脱敏输出: codex status/cost + GLM doctor; 诚实性分级表作为卖点; 局限清单 5 条; TraceLab 数字带引用) + README.zh-CN.md。
 - **scripts/smoke-install.mjs 可重复**: npm pack → 临时目录安装 (无全局副作用) → fixture HOME → 15 项检查全过 (tarball 白名单/bin/shebang/双 agent 发现/全命令面/--json/--help 无陈旧文案)。
 - **发布前剩余**: 唯一等待项 = 用户指令; 技术侧 checklist: 填 repository 字段 → npm publish (名字 `cacheguard` 2026-08-20 可用) → 建远程仓库。better-sqlite3 安装脚本需用户 npm approve-scripts (冒烟日志提示)。
+
+### 5.10 Round 7 结论 (2026-08-20)
+
+- **发布状态同步**: 总脑已静默发布 — GitHub cookiesheep/cacheguard + npm @cookiesheep/cacheguard (bin `cacheguard`), 本地 package.json/remote 已对齐。
+- **`cacheguard statusline`** (src/cli/statusline.ts): stdin JSON 的 `transcript_path`/`session_id` 直接定位 session (官方输入, 零猜测); **1MB 尾读 + 零 DB 写**; 输出 `♻ 97% · TTL 2m14s · bleed $0.45` (quota 模式 token 计); 降级: 垃圾 stdin/无 session/无遥测 → 中性短行, 异常 → 空输出 + exit 0。
+- **性能预算与实测**: 预算 = 管线 P95 <150ms (实测 **4.6ms**, 46MB 文件 20 轮) + 进程 P95 ≤250ms (实测 **180ms**, 其中本机 node 裸启动 ~98ms 是地板)。为达标做了两项结构优化: better-sqlite3 惰性加载 (statusline 不再付 ~100ms 原生模块导入); CLI 入口早分发 (statusline 不加载 commander/主 CLI) — 进程 P95 330ms→180ms。
+- **自用启用**: experiments/.claude-home/settings.json 已配置 (指向本地 dist); 真实活跃 session 官方协议调用输出 `✗ · 99% · TTL expired` (该 session 12h 无活动, 诚实)。
+- **CI**: .github/workflows/ci.yml (ubuntu/windows/macos × node 22.x/24.x, install→build→test); 已 push 验证 (结果见 §摘要/Actions)。README 徽章 + 双语 statusline 配置文档。
+- **环境注记**: claude 2.1.236 的 segfault 已自愈 (新版修复), .old 绕过不再需要。
+- **自用 soak 问题**: 无新发现 (本轮修复的 codex-dir/FK 均为 R6 冒烟产物)。
 
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 
