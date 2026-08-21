@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=3600",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "application/json",
+    "date": "Fri, 21 Aug 2026 10:20:12 GMT",
+    "ga-traceid": "ce8e669c56e9c803572633adee112f91",
+    "set-cookie": "acw_tc=ac1129a817873076106632124e08d5b095a7aec8f425032d6b0c7bb00b5168;path=/;HttpOnly;Max-Age=1800",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding, Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+    "x-log-id": "202608211820101f09f42c4a3f4783",
+    "x-process-time": "1.326782"
+  },
+  "body": "{\"id\":\"msg_202608211820101f09f42c4a3f4783\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"glm-5.3\",\"content\":[{\"type\":\"thinking\",\"thinking\":\"Let\",\"signature\":\"ebc88903b6764bdcba24726d\"}],\"stop_reason\":\"max_tokens\",\"stop_sequence\":null,\"usage\":{\"input_tokens\":13,\"output_tokens\":1,\"cache_read_input_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0},\"service_tier\":\"standard\"}}"
+}

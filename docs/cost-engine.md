@@ -14,7 +14,7 @@
 | claude-haiku-4-5 | 1.00 | 0.10 | 1.25 / 2.00 | 同上 ($1→$0.10 示例) |
 | gpt-5.6 (含 -sol/-luna 等变体) | 5.00 | 0.50 (0.1×) | 6.25 (1.25×, 30m) | OpenAI 官方 (audit §1.3: 90% off + GPT-5.6 写入加价) |
 | gpt-5.3-codex (pre-5.6) | 1.75 | 0.175 (0.1×) | **无**写入加价 | audit §1.3 |
-| glm-* (经网关的 claude-code) | — | — | — | **配额口径**: cached 全额计配额、无折扣 (audit §1.5); 无美元费率 → 只出 token 账 |
+| glm-* (经网关的 claude-code) | — | — | — | **积分口径** (2026-07-31 起): cached ≈ 1/4 input 权重 (官方系数 GLM-5.3: 6.9/1.7/24, 非高峰 50%); 无美元费率 → 当前仍只出 token 账, 积分计算为 V1.1 候选 (experiments/glm-quota-accounting.md) |
 
 - **模型归一化**: 精确/前缀匹配 (`claude-opus-5-20xx…` → opus-5; `gpt-5.6-sol` → gpt-5.6; `glm-5.2` → quota 模式)。裸别名 (`sonnet`/`opus`/`haiku`, 本机真实出现过) 无法确定代际 → PRICING_UNKNOWN (诚实优先于覆盖面)。
 - **costUSD 优先**: claude-code 记录若带官方 `costUSD` 字段 → spend 采用之 (`source: official`); 否则快照重算 (`source: snapshot`)。bleed 是反事实差值, 始终用快照价格 (costUSD 无法分解)。

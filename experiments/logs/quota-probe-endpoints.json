@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://open.bigmodel.cn/api/paas/v4/users/quota",
+    "status": 404,
+    "body": "{\"timestamp\":\"2026-08-21T10:20:25.025+00:00\",\"status\":404,\"error\":\"Not Found\",\"path\":\"/v4/users/quota\"}"
+  },
+  {
+    "url": "https://open.bigmodel.cn/api/paas/v4/users/balance",
+    "status": 404,
+    "body": "{\"timestamp\":\"2026-08-21T10:20:25.120+00:00\",\"status\":404,\"error\":\"Not Found\",\"path\":\"/v4/users/balance\"}"
+  },
+  {
+    "url": "https://open.bigmodel.cn/api/paas/v4/usage",
+    "status": 404,
+    "body": "{\"timestamp\":\"2026-08-21T10:20:25.221+00:00\",\"status\":404,\"error\":\"Not Found\",\"path\":\"/v4/usage\"}"
+  },
+  {
+    "url": "https://open.bigmodel.cn/api/coding/plan/v1/usage",
+    "status": 200,
+    "body": "{\"code\":500,\"msg\":\"404 NOT_FOUND\",\"success\":false}"
+  },
+  {
+    "url": "https://open.bigmodel.cn/api/paas/v4/model/usage",
+    "status": 404,
+    "body": "{\"timestamp\":\"2026-08-21T10:20:25.457+00:00\",\"status\":404,\"error\":\"Not Found\",\"path\":\"/v4/model/usage\"}"
+  },
+  {
+    "url": "https://open.bigmodel.cn/user/api/quota",
+    "status": 200,
+    "body": "<!DOCTYPE html><html lang=\"zh-cn\"><head><meta charset=\"utf-8\"><meta name=\"author\" content=\"北京智谱华章科技股份有限公司\"><meta name=\"copyright\" content=\"大模型开放平台\"><meta name=\"robots\" content=\"all\"><meta name=\"render"
+  }
+]

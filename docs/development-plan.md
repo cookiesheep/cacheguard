@@ -21,6 +21,7 @@
 | Round 6 — 发布准备 (未发布) | ✅ 完成 (2026-08-20) | F4 账本确定性 + F5 法务 + 双语 README + 安装冒烟; 见 §5.9 |
 | Round 7 — statusline 集成 + CI | ✅ 完成 (2026-08-20) | 官方 statusline 通道 + 3 OS × node 22/24 CI; 见 §5.10 |
 | Round 8 — OpenCodeAdapter (第三 Agent) | ✅ 完成 (2026-08-20) | 真实数据验证 (opencode.db SQLite); 见 §5.11 |
+| Round 9 — V1: GLM 配额核算实验 | ✅ 完成 (2026-08-21) | **cached ≈ 24.6% 折扣 [A 官方定论]**; keepalive 有条件回归; 见 §5.12 |
 | Phase 2+ — Cost Engine 深化 | ⬜ | LiteLLM 快照导入、per-day 汇总 |
 | Phase 3 — Auto Protect | ⬜ 未开始 | 明确不提前实现; refresh 语义已 verified, 决策引擎需建模逐出概率 |
 
@@ -217,6 +218,16 @@ scripts/schema-audit.mjs    # 重新审计本机 Claude Code JSONL schema
 - **Policy**: 模型家族驱动 (与 codex 分支共用 + claude-* → 5m 静态); gpt-5.4 不在费率快照 → token 账 (本机实测输出正确)。
 - **顺手修**: sessions 列表改 per-agent top-15 (440+ codex 文件曾把其他 agent 挤出列表)。
 - 测试 94→105 (+11, 含真实脱敏 fixture tests/fixtures/opencode/real-derived.json)。
+
+### 5.12 Round 9: V1 — GLM Coding Plan 配额核算结论 (2026-08-21)
+
+> **定位升级记录 (用户拍板)**: "自用驱动 + GLM/网关生态目标市场" — 服务 GLM Coding Plan 及同类网关/中转站里用 Claude Code / Codex / OpenCode 的用户;开发引擎仍是用户痛感驱动。
+
+- **V1 定论 [A]**: 套餐配额 = **积分制** (2026-07-31 起),公式 `(in×Input系数 + cached×Cached系数 + out×Output系数)/10000`;**cached ≈ 1/4 input 权重** (GLM-5.3: 1.7/6.9=24.6%);**write 免费**;非高峰 50%。文档级定论即停 (总消耗 14 tokens)。详报: experiments/glm-quota-accounting.md。
+- **勘误**: R1 审计的"cached 全额计"社区证据为旧限额制 (积分制之前),相关表述已在 snapshot note / cost-engine.md 修正;audit 文档作为历史记录保留。
+- **keepalive 判定**: 有条件回归 — miss≈4× touch 成本比值为正,但无官方 TTL + 高命中率 harness 空间小;回归门槛 = quota 积分账本 (V1.1) 积累真实 miss 成本分布后再决。
+- **接口级副产物**: 无编程可读配额端点 (兼容层/开放平台/zcode-plan 三路穷尽);ZCode 命中率来自本地 DB 自算 (非官方端点)。
+- **下轮候选 (V1.1)**: quota 模式输出官方积分账 (系数已全公开, vendored 表 + 非高峰判断);miss 代价行升级为积分;statusline bleed 积分显示。
 
 ## 6. 参考文献 (Phase 0 调研, 2026-08-19)
 

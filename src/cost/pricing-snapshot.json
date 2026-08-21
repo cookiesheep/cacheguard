@@ -140,7 +140,7 @@
         "glm-"
       ],
       "mode": "quota-full-price",
-      "note": "GLM Coding Plan: cached tokens count fully against quota, no discount, no USD list price.",
+      "note": "GLM Coding Plan credits system (since 2026-07-31): quota in credits, cached tokens weigh ~1/4 of input (coefficients e.g. GLM-5.3: input 6.9 / cached 1.7 / output 24 per 10k tokens; off-peak 50% off). No USD list price. See experiments/glm-quota-accounting.md.",
       "sourceUrl": "https://docs.research-audit-2026-08-19.md#1.5"
     }
   ]

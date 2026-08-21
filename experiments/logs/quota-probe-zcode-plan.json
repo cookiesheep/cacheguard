@@ -1,0 +1,27 @@
+[
+  {
+    "url": "https://zcode.z.ai/api/v1/zcode-plan/usage",
+    "status": 404,
+    "body": "404 page not found"
+  },
+  {
+    "url": "https://zcode.z.ai/api/v1/zcode-plan/quota",
+    "status": 404,
+    "body": "404 page not found"
+  },
+  {
+    "url": "https://zcode.z.ai/api/v1/zcode-plan/me",
+    "status": 404,
+    "body": "404 page not found"
+  },
+  {
+    "url": "https://zcode.z.ai/api/v1/zcode-plan/status",
+    "status": 404,
+    "body": "404 page not found"
+  },
+  {
+    "url": "https://zcode.z.ai/api/v1/zcode-plan/info",
+    "status": 404,
+    "body": "404 page not found"
+  }
+]
